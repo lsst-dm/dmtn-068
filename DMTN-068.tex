@@ -1,0 +1,45 @@
+\documentclass[DM,lsstdraft,authoryear,toc]{lsstdoc}
+
+% Package imports go here
+
+% Local commands go here
+
+\title[Lossy Compression]{Lossy Compression WG Report}
+
+\author{
+A.~Author,
+B.~Author,
+and
+C.~Author}
+
+\setDocRef{DMTN-068}
+\date{\today}
+
+\setDocAbstract{
+We report on the investigation into the use of lossy compression algorithms on LSST
+images that otherwise could not be stored for general retrieval and use by scientists.
+}
+
+% Change history defined here. Will be inserted into
+% correct place with \maketitle
+% OLDEST FIRST: VERSION, DATE, DESCRIPTION, OWNER NAME
+\setDocChangeRecord{%
+\addtohist{1}{2017-04-17}{Initial release. Based on LDM example}{Tim Jenness}
+\addtohist{2}{yyyy-mm-dd}{Future changes}{Future person}
+}
+
+\begin{document}
+
+% Create the title page
+% Table of contents will be added automatically if "toc" class option
+% is used.
+\maketitle
+
+\input body.tex
+
+% Include all the relevant bib files.
+% lsst is for DocuShare and DMTN entries.
+% refs_ads is for entries coming from ADS.
+\bibliography{lsst,lsst-dm,refs,books,refs_ads}
+
+\end{document}
