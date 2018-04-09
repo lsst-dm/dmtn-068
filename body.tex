@@ -142,9 +142,109 @@ $\sigma_{{\rm I}_{q}}$ differs from $\sigma_{{\rm I}_{0}}$ by less than a part i
 \label{weight_difference}
 \end{figure}
 
+\subsection{Aggregate Image Compression Benchmarks}
+
+Beside the individual images, a coadded patch was constructed from the never-compressed and then the quantized data 
+products.  While only two coadded images were produced per test run, these can be put through a comparison similar 
+to that made for the individual images to get a sense of the down-stream consequences if compressed images were used
+to construct coadd images.  The results from those comparisons are summarized in Table~\ref{tab_agg_image}.  One 
+difference in how the comparison is performed for the COADDed patch is that flagged pixels are now included.
+
+
+\begin{table}
+\caption{Compression Factor Achieved {\bf THIS IS SIMPLY A COPY/PLACEHOLDER}}
+\centering
+\begin{tabular}[]{crrrrrrrrr}
+\hline
+ q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstdb  \\
+\hline
+ q4       &   6.73 &  6.73 &  9.96 &  9.95 &  9.96 &  3.69 &  3.11 &  6.29 &  6.29  \\
+ q8       &   5.54 &  5.53 &  8.20 &  8.20 &  8.21 &  3.34 &  2.96 &  5.42 &  5.42  \\
+ q16      &   4.69 &  4.69 &  5.41 &  7.01 &  7.03 &  3.11 &  2.82 &  4.82 &  4.82  \\
+ q32      &   4.04 &  4.03 &  6.14 &  6.14 &  6.14 &  2.93 &  2.66 &  4.35 &  4.35  \\
+ q64      &   3.62 &  3.62 &  5.47 &  5.47 &  5.48 &  2.82 &  2.47 &  3.94 &  3.94  \\
+ q128     &   3.38 &  3.37 &  4.88 &  4.88 &  4.88 &  2.66 &  2.32 &  3.56 &  3.57  \\
+ vanilla  &   1.71 &  1.71 &  1.80 &  1.80 &  1.80 &  1.50 &  1.49 &  1.72 &  1.72  \\
+\hline
+\end{tabular}
+\label{tab_agg_image}
+\end{table}
+
+At the image level, independent measurements of the noise in the original science 
+and weight images (I$_{0}$, W$_{0}$) and the quantized versions (I$_{\rm q}$, W$_{\rm q}$) are made.
+The algorithms used are independent of those that performed the estimates used to set the quantization.
+
 
 
 \subsection{Catalog/Measurement benchmarks}
+
+Here we outline the comparison of measurements made on individual ccd-visit images with and without 
+lossy compression applied.  Currently four types of measurements are considered: aperture photometry, 
+PSF photometry, centroids, and shapes.  In each case the comparison is made by using forced photometry
+based on the COADD catalogs from the {\it ci\_hsc} pipeline applied to the never-quantized and quantized
+images and then performing and astrometric match between the never-compressed catalog and those from the
+catalogs from the quantized images.  Note a generous match radius of 2\arcsec is used and the nearest match
+is considered to measurements of the same object.  
+
+Figures~\ref{plot_app_flux} show comparisons for flux measurements for aperture photometry 
+using a 6 pixel radius circular aperture and Figure~\ref{plot_psf_flux} for PSF fitting, respectively.
+In each plot, the top two panels set show (first) the total number of objects 
+per flux bin and then a plot showing the flux uncertainty as a function of flux from the never compressed image.  
+Beneath these are plotted the difference between the measurements from the quantized images and the never-quantized 
+images with subsequent plots using an increasing level of quantization.  These differnce plots are shown in units of
+$\sigma_{\rm F_0}$.  Also plotted are histograms showing the diffence level that encompasses 50, 75, 90, and 99\% of the 
+measurements as a function of flux bin.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_CircularApertureFlux_6_0_HSC-I.png}
+\caption{Comparison of aperture photometry measurements (from a 6 pixel radius aperture) resulting from forced photometry 
+on individual images with and without quantization/compression.
+The top panel shows the distrubution of objects as a function of their flux measured in the original image(s).  The second show 
+measure uncertainties for those flux measurements.  The panels below show the difference between the flux measurements made on the
+unquantized and quantized images divided by the uncertainty in the quantized images (in units of $\sigma_{\rm F_0}$.  A dashed horizontal 
+red line shows the 1$\sigma$ difference level for reference.  Lower panels are employed systematically higher quantization factors on the
+images.  The histograms in each panel show the difference level at which 50, 75, 90 and 90\% of the objects are found.}
+\label{plot_app_flux}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_PsfFlux_HSC-I.png}
+\caption{Same as Figure~\ref{plot_app_flux} but for PSF fitting photometry.}
+\label{plot_psf_flux}
+\end{figure}
+
+
+Figure~\ref{plot_cen} shows comparisons of centroid and Figure~\ref{plot_shape} show shape measurements as a function of signal to noise 
+(in the unquantized image).  For the centroids the units are in pixels offset between the measurement made on the 
+never-quantized and quantized images, $X_q-X_0 = \sqrt{ (x_q-x_0)^2 + (y_q-y_0)^2}$.  
+For the shapes we have defined the parameter $S=(I_{xx} I_{yy} - I_{xy}^2)^{1/4}$ (akin to a radius) 
+where the uncertainty can be expressed as $\sigma_S^2 = (\frac{\partial S}{\partial I_{xx}})^2 \sigma_{I_{xx}}^2 + 
+(\frac{\partial S}{\partial I_{yy}})^2 \sigma_{I_{yy}}^2 + (\frac{\partial S}{\partial I_{xy}})^2 \sigma_{I_{xy}}^2$.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssCentroid_HSC-I.png}
+\caption{Similar to Figures~\ref{plot_app_flux}\&\ref{plot_psf_flux} but for centroid measurements as function of the signal-to-noise ratio
+of the unquantized measurements.  The differences in the lower panels are in units of pixel offset.}
+\label{plot_cen}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssShape_HSC-I.png}
+\caption{Similar to Figure~\ref{plot_cen} but for the SDSS shape measurments.  The comparison is made using the quantity S which is equivalent to
+a size/radius.}
+\label{plot_shape}
+\end{figure}
+
+
+
+
+
+
+\subsection{Catalog/Measurement from COADD images constructed from quantized PVI images}
 
 
 \subsection{Compression Algorithm benchmarks}
