@@ -22,7 +22,7 @@ retained for each data release). Anecdotal experience from the Dark Energy
 Survey (DES) and other surveys (e.g. HSC) indicates that lossy compression 
 can be applied, without loss of scientific fidelity.  If this is the case, 
 the reduced disk space needs may enable LSST to retain on low-latency media 
-more data that we otherwise would (rather than regenerate or pull from tape. 
+more data that we otherwise would (rather than regenerate or pull from tape). 
 
 
 \section{Methodology}
@@ -142,6 +142,7 @@ $\sigma_{{\rm I}_{q}}$ differs from $\sigma_{{\rm I}_{0}}$ by less than a part i
 \label{weight_difference}
 \end{figure}
 
+
 \subsection{Aggregate Image Compression Benchmarks}
 
 Beside the individual images, a coadded patch was constructed from the never-compressed and then the quantized data 
@@ -242,9 +243,44 @@ a size/radius.}
 
 
 
-
-
 \subsection{Catalog/Measurement from COADD images constructed from quantized PVI images}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/plot_coadd_cflux_HSC-I.png}
+\caption{Similar to Figure~\ref{plot_app_flux} but comparing measurements made on COADD images constructured from 
+never quantized and quantized images.}
+\label{coadd_app_flux}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/plot_coadd_pflux_HSC-I.png}
+\caption{Same as Figure~\ref{coadd_app_flux} but for PSF fitting photometry.}
+\label{coadd_psf_flux}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/plot_coadd_centroid_HSC-I.png}
+\caption{Similar to Figures~\ref{plot_app_flux}\&\ref{plot_psf_flux} but for centroid measurements as function of the signal-to-noise ratio
+of the unquantized measurements.  The differences in the lower panels are in units of pixel offset.}
+\label{coadd_cen}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figure/plot_coadd_shape_HSC-I.png}
+\caption{Similar to Figure~\ref{plot_cen} but for the SDSS shape measurments.  The comparison is made using the quantity S which is equivalent to
+a size/radius.}
+\label{coadd_shape}
+\end{figure}
+
+
+
+
 
 
 \subsection{Compression Algorithm benchmarks}
@@ -363,5 +399,4 @@ The proposed membership is:
     \item Eric Morganson (DES/NCSA; observer)
     \item Ben Emmons (EPO Tucson; observer)
 \end{itemize}
-
 
