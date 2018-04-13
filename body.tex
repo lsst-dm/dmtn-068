@@ -213,59 +213,108 @@ catalogs from the quantized images with a 1\arcsec\ match radius (with the neare
 considered the match).  The results from multiple CCDs are accumulated into a single plot in order
 to obtain statistics at the bright end.
 
-Figures~\ref{plot_app_flux} show comparisons for flux measurements for aperture photometry 
-using a 6 pixel radius circular aperture and Figure~\ref{plot_psf_flux} for PSF fitting, respectively.
-In each plot, the top two panels set show (first) the total number of objects 
-per flux bin and then a plot showing the flux uncertainty as a function of flux from the never compressed image.  
-Beneath these are plotted the difference between the measurements from the quantized images and the never-quantized 
-images with subsequent plots using an increasing level of quantization.  These differnce plots are shown in units of
-$\sigma_{\rm F_0}$.  Overplotted are histograms showing the diffence level that encompasses 50, 75, 90, and 99\% of the 
-measurements as a function of flux bin.
+Figures~\ref{plot_se_flux} show comparisons for flux measurements for aperture photometry 
+and PSF fitting.  The aperture photometry measurements {\it base\_CircularApertureFlux\_6\_0} 
+use a 6 pixel radius circular aperture while the PSF fitting measurements are the
+{\it base\_PsfFlux\_flux} measurements.  Note that in these plots no star-galaxy classifier 
+was used to subselect stellar/point-source measurements.
 
-\begin{figure}
+The top two panels in each set show the total number of objects per flux bin, followed by a plot 
+showing the flux uncertainty as a function of flux from the never compressed image.  Beneath these 
+are plotted the difference between the measurements from the quantized images and the never-quantized 
+images with subsequent plots using an increasing level of quantization.  These differnce 
+plots are shown in units of $\sigma_{\rm F_0}$ (i.e. each difference measurement is scaled by the
+uncertainty in the flux measured in the unquantized image).  Overplotted are histograms showing the 
+diffence level that encompasses 50, 75, 90, and 99\% of the measurements as a function of flux bin.
+{\bf Remove 99\% histogram?}
+Careful examination of the histograms show that for quantization, q=16 or greater 50\% of all 
+flux measurements differ by less than 0.01$\sigma$ and 90% by less than 0.1$\sigma$ when 
+compared to the measurements on the unquantized images.
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_CircularApertureFlux_6_0_HSC-I.png}
-\caption{Comparison of aperture photometry measurements (from a 6 pixel radius aperture) resulting from forced photometry 
-on individual images with and without quantization/compression.
-The top panel shows the distrubution of objects as a function of their flux measured in the original image(s).  The second show 
-measure uncertainties for those flux measurements.  The panels below show the difference between the flux measurements made on the
-unquantized and quantized images divided by the uncertainty in the quantized images (in units of $\sigma_{\rm F_0}$.  A dashed horizontal 
-red line shows the 1$\sigma$ difference level for reference.  The lower panels are for measurements from the images with 
-progressively higher quantization factors (less loss).
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/rplot_all_base_CircularApertureFlux_6_0_HSC-I.png}
+%        \label{fig:sub1}
+    \end{minipage}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/rplot_all_base_PsfFlux_HSC-I.png}
+%        \label{fig:sub2}
+    \end{minipage}
+\caption{Comparison of aperture (left) and PSF photometry (right) measurements resulting from forced photometry 
+on individual images with and without quantization/compression.  The top panel in each shows the distrubution 
+of objects as a function of their flux measured in the original image(s).  The second plots show measure uncertainties 
+for those flux measurements.  The panels below show the difference between the flux measurements made on the
+unquantized and quantized images divided by the uncertainty in the quantized images (in units of $\sigma_{\rm F_0}$.  
+A dashed horizontal red line shows the 1$\sigma$ difference level for reference.  The lower panels are for 
+measurements from the images with progressively higher quantization factors (less loss).
 The histograms in each panel show the difference level at which 50, 75, 90 and 90\% of the objects are found.}
-\label{plot_app_flux}
+\label{plot_se_flux}
 \end{figure}
 
-\begin{figure}
+
+Similar to the flux measurements, Figure~\ref{plot_cen_shape} shows comparisons of centroid
+and shape measuremnts (left and right panels, respectively) as a function of signal-to-noise
+(S/N) in the unquantized images.  For the centroids we use the {\it base\_SdssCentroid\_x} (x), and 
+{\it base\_SdssCentroid\_y} (y), to compute the linear offset 
+$X_q-X_0 = \sqrt{ (x_q-x_0)^2 + (y_q-y_0)^2}$ between the measurments
+made in the quantized and unquantized images.  Note that the current version of forced photometry 
+does not flag poor and low signal-to-noise measurements so those measurements pollute/inflate the 
+distributions show in the low signal-to-noise portion of the centroid plots in Figure~\ref{plot_cen_shape}.
+
+In order to investigate the impact of quantization on shapes, we use the {\it base\_SdssShape\_xx}, 
+{\it base\_SdssShape\_yy}, and {\it base\_SdssShape\_xy} measurements to form a shape measurement, 
+$S$, where $S=(I_{xx} I_{yy} - I_{xy}^2)^{1/4}$.
+Assuming that those 2nd moment measurements are not strongly correlated, we also define
+the uncertainty in $S$ as 
+$\sigma_S^2 = (\frac{\partial S}{\partial I_{xx}})^2 \sigma_{I_{xx}}^2 + 
+(\frac{\partial S}{\partial I_{yy}})^2 \sigma_{I_{yy}}^2 + 
+(\frac{\partial S}{\partial I_{xy}})^2 \sigma_{I_{xy}}^2$, and use the associated uncertainties
+to estimate $\sigma_S$.  Figure~\ref{plot_cen_shape} shows these measurements and makes a comparison
+of the quantized measurments to those found with the unquantized images.  Measurements with 
+{\it base\_SdssShape\_flag} have been excluded.
+
+Examination of the centroid plots in Figure~\ref{plot_cen_shape} show that for quantization of q=16 or
+better the difference in centroid measurements is less than 0.1 pixels for 90\% of measurements for
+sources with S/N$>$10.  Similarly, for shape measurements the differences in $S$ are already less than 
+0.01 pixels for 90\% of objects at a S/N$>$10.  
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_PsfFlux_HSC-I.png}
-\caption{Same as Figure~\ref{plot_app_flux} but for PSF fitting photometry.}
-\label{plot_psf_flux}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/rplot_all_base_SdssCentroid_HSC-I.png}
+%        \label{fig:sub1}
+    \end{minipage}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/rplot_all_base_SdssShape_HSC-I.png}
+%        \label{fig:sub2}
+    \end{minipage}
+\caption{Similar to Figures~\ref{plot_se_flux} but for centroid (left) and shape (right) measurements as function 
+of the signal-to-noise ratio of the unquantized measurements.  The differences in the lower panels 
+are in units of pixel offset and pixel radius for the centroid and shape measurements, respectively.}
+\label{plot_cen_shape}
 \end{figure}
 
-
-Figure~\ref{plot_cen} shows comparisons of centroid and Figure~\ref{plot_shape} show shape measurements as a function of signal to noise 
-(in the unquantized image).  For the centroids the units are in pixels offset between the measurement made on the 
-never-quantized and quantized images, $X_q-X_0 = \sqrt{ (x_q-x_0)^2 + (y_q-y_0)^2}$.  
-For the shapes we have defined the parameter $S=(I_{xx} I_{yy} - I_{xy}^2)^{1/4}$ (akin to a radius) 
-where the uncertainty can be expressed as $\sigma_S^2 = (\frac{\partial S}{\partial I_{xx}})^2 \sigma_{I_{xx}}^2 + 
-(\frac{\partial S}{\partial I_{yy}})^2 \sigma_{I_{yy}}^2 + (\frac{\partial S}{\partial I_{xy}})^2 \sigma_{I_{xy}}^2$.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssCentroid_HSC-I.png}
-\caption{Similar to Figures~\ref{plot_app_flux}\&\ref{plot_psf_flux} but for centroid measurements as function of the signal-to-noise ratio
-of the unquantized measurements.  The differences in the lower panels are in units of pixel offset.}
-\label{plot_cen}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssShape_HSC-I.png}
-\caption{Similar to Figure~\ref{plot_cen} but for the SDSS shape measurments.  The comparison is made using the quantity S which is equivalent to
-a size/radius.}
-\label{plot_shape}
-\end{figure}
+%
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssCentroid_HSC-I.png}
+%\caption{Similar to Figures~\ref{plot_app_flux}\&\ref{plot_psf_flux} but for centroid measurements as function of the signal-to-noise ratio
+%of the unquantized measurements.  The differences in the lower panels are in units of pixel offset.}
+%\label{plot_cen}
+%\end{figure}
+%
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssShape_HSC-I.png}
+%\caption{Similar to Figure~\ref{plot_cen} but for the SDSS shape measurments.  The comparison is made using the quantity S which is equivalent to
+%a size/radius.}
+%\label{plot_shape}
+%\end{figure}
 
 
 
@@ -275,40 +324,41 @@ a size/radius.}
 Similar to the comparisons made for the individual images, we compare the catalog measurements from the coadded patch
 that was constructed from the never-quantized and the quantized PVI images.  Note, no further quantization/loss was applied
 to the COADD images.  The same four quantities were examined (aperture flux, PSF flux, centroid, and shape).  
-Figures~\ref{coadd_app_flux} through \ref{coadd_shape} show the results of that comparison.
+Figures~\ref{plot_coadd_flux} through \ref{plot_coadd_cen_shape} show the results of that comparison.
 
-\begin{figure}
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.75\textwidth]{figure/plot_coadd_cflux_HSC-I.png}
-\caption{Similar to Figure~\ref{plot_app_flux} but comparing measurements made on COADD images constructured from 
-never quantized and quantized images.}
-\label{coadd_app_flux}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/plot_coadd_cflux_HSC-I.png}
+%        \label{fig:sub1}
+    \end{minipage}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/plot_coadd_pflux_HSC-I.png}
+%        \label{fig:sub2}
+    \end{minipage}
+\caption{Similar to Figure~\ref{plot_se_flux} but for measurements made on the coadd image.}
+\label{plot_coadd_flux}
 \end{figure}
 
-\begin{figure}
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.75\textwidth]{figure/plot_coadd_pflux_HSC-I.png}
-\caption{Same as Figure~\ref{coadd_app_flux} but for PSF fitting photometry.}
-\label{coadd_psf_flux}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/plot_coadd_centroid_HSC-I.png}
+%        \label{fig:sub1}
+    \end{minipage}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{figure/plot_coadd_shape_HSC-I.png}
+%        \label{fig:sub2}
+    \end{minipage}
+\caption{Similar to Figure~\ref{plot_cen_shape} but for measurements made on the coadd image.}
+\label{plot_coadd_cen_shape}
 \end{figure}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figure/plot_coadd_centroid_HSC-I.png}
-\caption{Similar to Figures~\ref{plot_app_flux}\&\ref{plot_psf_flux} but for centroid measurements as function of the signal-to-noise ratio
-of the unquantized measurements.  The differences in the lower panels are in units of pixel offset.}
-\label{coadd_cen}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figure/plot_coadd_shape_HSC-I.png}
-\caption{Similar to Figure~\ref{plot_cen} but for the SDSS shape measurments.  The comparison is made using the quantity S which is equivalent to
-a size/radius.}
-\label{coadd_shape}
-\end{figure}
-
 
 
 
@@ -355,7 +405,7 @@ was available the threading was set to use 4 cores.
 \hline
  q4       &   6.73 &  6.73 &  9.96 &  9.95 &  9.96 &  3.69 &  3.11 &  6.29 &  6.29  \\
  q8       &   5.54 &  5.53 &  8.20 &  8.20 &  8.21 &  3.34 &  2.96 &  5.42 &  5.42  \\
- q16      &   4.69 &  4.69 &  5.41 &  7.01 &  7.03 &  3.11 &  2.82 &  4.82 &  4.82  \\
+ q16      &   4.69 &  4.69 &  6.81 &  7.01 &  7.03 &  3.11 &  2.82 &  4.82 &  4.82  \\
  q32      &   4.04 &  4.03 &  6.14 &  6.14 &  6.14 &  2.93 &  2.66 &  4.35 &  4.35  \\
  q64      &   3.62 &  3.62 &  5.47 &  5.47 &  5.48 &  2.82 &  2.47 &  3.94 &  3.94  \\
  q128     &   3.38 &  3.37 &  4.88 &  4.88 &  4.88 &  2.66 &  2.32 &  3.56 &  3.57  \\
@@ -410,9 +460,23 @@ was available the threading was set to use 4 cores.
 
 \section{Recommendations}
 
-The Working Group will provide a recommendation on the suitability of the implementation
-of a lossy compression algorithm of LSST products with a figure of merit that can be 
-applied with the LSST Sizing Model (\citedsp{LDM-144}).
+Below, our recommendations assume:
+1) The capability to recompute a reduced-calibrated image product on-the-fly will be possible for users that need such.
+2) Astronomers have the scientific acumen to understand that measurements and products made using lossy-compressed images will not exactly match those made during release production.
+3) A more regimented test covering a wider area and constructing coadds with greater depth are required to verify that the performance on the coadds in {\it ci\_hsc} run are indicative of the small number of images being combined and limited area being covered.
+
+Based on these analyses, it should be possible to make available compressed processed visit images (PVIs) 
+to the user community that would enable scientific followup (without needing to resort to retrieval
+from a tape archive or recomputation of the image data).  At quantization levels of 16 (or conservatively 32),
+the measurement differences would typically be less than a 1\% change.
+
+
+There is no reason to compromise measurements in DRP for this (the best measurements possible should be provided within data releases). 
+
+The best candidate for compression is BZIP2.
+
+With the advent of Alert Processing, some attention should be paid to determine whether Pre-Covery measurements can meet requirements if lossy-compressed PVIs are used.
+
 
 
 \section{WG Membership}
