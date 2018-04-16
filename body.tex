@@ -24,13 +24,16 @@ would be engaged in regenerating or serving a tape archive.
 
 The LSST has traditionally avoided lossy compression for any of its image data products 
 (including the large co-added images as well as templates retained for each data release). 
-Anecdotal experience from the Dark Energy Survey (DES; which uses FPACK; \citet{PSW2009}) 
-and other surveys (e.g. HSC) indicates that lossy compression can be applied, without 
-loss of scientific fidelity.  \citet{PWH2010} have argued that none of the scientific 
-information is lost in an astronomical image even with fairly drastic quantization 
-(at levels as high as 0.5$\sigma$).  The tests used by \citet{PWH2010} were relatively 
-idealized, in this note we describe the results from a small test using precursor data 
-from HSC to provide a sense of how lossy compression might be applied for LSST.
+Anecdotal experience from other recent surveys indicate that science ready images stored
+with a lossy compression satisfy the scientific needs of their user communities.  For example, 
+the Dark Energy Survey (DES), uses FPACK \citep{PSW2009} with a quantization of 16, 
+and Pan-STARRS reportedly uses 4-bits per standard deviation (also equivalent to a 
+quantization factor of 16) but with an inverse hyperbolic sine transformation to concetrate 
+the sampling near the background level \citep{Wetal2016}.  Indeed, \citet{PWH2010} have 
+argued that none of the scientific information is lost in an astronomical image even with 
+fairly drastic quantization (at levels as high as 0.5$\sigma$).  The tests used by \citet{PWH2010} 
+were relatively idealized, in this note we describe the results from a small test using 
+precursor data from HSC to provide a sense of how lossy compression might be applied for LSST.
 
 
 
@@ -48,6 +51,7 @@ vignetting causes a portion of the detector unusable for science.  These regions
 masked and present very different noise characteristics but are useful because they show some 
 caveats that must be considered when applying compression.
 
+As part of this investigation we have separated the loss from the actual compression algorithm.
 A change has been injected into the pipeline that allows for a quantization to be applied
 to the science (and weight) images that are traditionally stored as floats.  Formally,
 the quantization factor, q, determines the number of samples/subdivisions of some set
@@ -461,22 +465,44 @@ was available the threading was set to use 4 cores.
 \section{Recommendations}
 
 Below, our recommendations assume:
-1) The capability to recompute a reduced-calibrated image product on-the-fly will be possible for users that need such.
-2) Astronomers have the scientific acumen to understand that measurements and products made using lossy-compressed images will not exactly match those made during release production.
-3) A more regimented test covering a wider area and constructing coadds with greater depth are required to verify that the performance on the coadds in {\it ci\_hsc} run are indicative of the small number of images being combined and limited area being covered.
+\begin{itemize}
+\item The capability to recompute a reduced-calibrated image product on-the-fly will be possible for users that need such.
+\item Astronomers have the scientific acumen to understand that measurements and products made using lossy-compressed images will not exactly match those made during release production.
+\item The tests in this note are inadequate in a couple of respects.  The measurement algorithms are not those that will be deployed in the LSST Alert and Data Release Processing. The COADD images/catalogs in the current tests are comprised of a small amount of data and therefore cover a small area with shallow depth.  In order to have a detailed understanding of the impact of compression a much larger dataset than a {\it ci\_hsc} would be needed.
+\end{itemize}
 
-Based on these analyses, it should be possible to make available compressed processed visit images (PVIs) 
-to the user community that would enable scientific followup (without needing to resort to retrieval
-from a tape archive or recomputation of the image data).  At quantization levels of 16 (or conservatively 32),
-the measurement differences would typically be less than a 1\% change.
+With these in mind we recommend the following:
+\begin{enumerate}
+\item Most scientific use cases should be satisfied by a quantization factor of q=16 or q=32.  This would provide XX, YY, ZZ {\bf (Note this is being addressed now see \#2 in Section~\ref{sec_tbd}.)}
+
+\item The best performaning, off-the-shelf candidate for compression is BZIP2 which acheives a compression factor of 5-7.  Its main drawback is speed but in trading speed for compression factor the use of LZ or ZSTD would roughly double the storage costs.
+
+\item There is no reason to compromise measurements in DRP by compressing products prior to making measurements (i.e. the best possible measurements 
+should be provided within data releases).  The caveat to this is that should the pipelines rely upon all PVI images to be computed, measured, and stored
+in preparation for a coadd campaign (similar to the current DES pipelines) then the data volume will almost certainly require these intermediate products
+be compressed.
+
+\item With the advent of an Alert Processing pipeline, some attention should be paid to determine whether Pre-Covery measurements can meet requirements if lossy-compressed PVIs are used.  A similar test could be used to determine whether compressed templates adversely effect the difference pipeline.
+
+\end{enumerate}
 
 
-There is no reason to compromise measurements in DRP for this (the best measurements possible should be provided within data releases). 
+\newpage
+\section{TBD, Comments, etc...}\label{sec_tbd}
 
-The best candidate for compression is BZIP2.
+The following are the results of comments, suggestions to improve complete this analysis (currently from the WG).  
+Each of these are being considered (and if others have suggestions I am willing to listen) but this effort has now reached 
+the point where it is poised to embrace the enemy of the good (i.e. the perfect) so higher powers may be encouraged/invoked to truncate this list.
 
-With the advent of Alert Processing, some attention should be paid to determine whether Pre-Covery measurements can meet requirements if lossy-compressed PVIs are used.
-
+\begin{enumerate}
+\item ADD:  number of sources lost as of function q
+\item ADD:  Table with benchmark vs q for each set of measurements
+\item ADD:  Contribution due to Lossy compression in an error budget (look at delta-uncertainty vs q?)
+\item ADD:  Code in repository
+\item {\bf Done}  ADD: explain separability between compression and quantization
+\item {\bf Done} ADD: PanStarrs: used compression on-the-fly with no complications or complaints...  (4-bits per std → q=16)
+\item FITS compatibility.... 
+\end{enumerate}
 
 
 \section{WG Membership}
