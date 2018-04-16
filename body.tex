@@ -473,16 +473,19 @@ Below, our recommendations assume:
 
 With these in mind we recommend the following:
 \begin{enumerate}
-\item Most scientific use cases should be satisfied by a quantization factor of q=16 or q=32.  This would provide XX, YY, ZZ {\bf (Note this is being addressed now see \#2 in Section~\ref{sec_tbd}.)}
+\item {\bf Quantization Factor:} Most scientific use cases should be satisfied by a quantization factor of q=16 or q=32.  This would provide XX, YY, ZZ as summarized in Table~{\bf Work for Tuesday 17th}. {\bf (Note this is being addressed now see \#2 in Section~\ref{sec_tbd}.)}
 
-\item The best performaning, off-the-shelf candidate for compression is BZIP2 which acheives a compression factor of 5-7.  Its main drawback is speed but in trading speed for compression factor the use of LZ or ZSTD would roughly double the storage costs.
+\item {\bf Algorithm:} The best performaning, off-the-shelf candidate for compression is BZIP2 which acheives a compression factor of 5-7.  Its main drawback is speed but in trading speed for compression factor the use of LZ or ZSTD would roughly double the storage costs. 
 
-\item There is no reason to compromise measurements in DRP by compressing products prior to making measurements (i.e. the best possible measurements 
-should be provided within data releases).  The caveat to this is that should the pipelines rely upon all PVI images to be computed, measured, and stored
-in preparation for a coadd campaign (similar to the current DES pipelines) then the data volume will almost certainly require these intermediate products
-be compressed.
+\item {\bf When and where to use compress:}  Compression should occur after production but before archiving. 
+This ameliorates any risk that compression adversely impacts the ability of LSST to meet science requirements.  The availability of compressed products for
+users is meant to allow investigations to proceed without an explicit need for reprocessing.  
 
-\item With the advent of an Alert Processing pipeline, some attention should be paid to determine whether Pre-Covery measurements can meet requirements if lossy-compressed PVIs are used.  A similar test could be used to determine whether compressed templates adversely effect the difference pipeline.
+\item {\bf Products:} PVI images are the clearest case where lossy compression should be considered as these products otherwise would not be stored or would require a large tape storage infrastructure.  Other products could be considered as a means to realize savings for storage and data transfer but tests would be needed and require working versions of the pipelines where such products might be used.
+
+\item {\bf Other uses:} With the advent of an Alert Processing pipeline, some attention should be paid to determine whether Pre-Covery measurements can meet requirements if lossy-compressed PVIs are used.  A similar test could be used to determine whether compressed templates adversely effect the difference pipeline.
+
+\item {\bf Verification:} The current tests are not realized within the LSST framework or QA effort and they are moderately costly to make (they require production to be repeated for each level of quantization).  This is silly.  It is recommended that a means to implement tests similar to these that can be used with the still maturing LSST measurement algorithms be made available.}
 
 \end{enumerate}
 
