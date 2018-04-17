@@ -15,7 +15,7 @@ be too costly and therefore not feasible, unless lossy compression is applied.
 The same analysis did indicated that storing all raw data on disk (with a loss-less 
 compression) is feasible.  The Lossy Compression WG was asked to investigate whether 
 some pipeline products might be saved after applying a lossy compression algorithm 
-without significantly degrading their suitablity for a wide range of scientific 
+without significantly degrading their suitability for a wide range of scientific 
 investigations.  Central to this is the need that the compressed products be small 
 enough that the cost to store and serve these images could be met within a reasonable 
 budget.  The benefit from storing compressed products would only be realized if those 
@@ -28,7 +28,7 @@ Anecdotal experience from other recent surveys indicate that science ready image
 with a lossy compression satisfy the scientific needs of their user communities.  For example, 
 the Dark Energy Survey (DES), uses FPACK \citep{PSW2009} with a quantization of 16, 
 and Pan-STARRS reportedly uses 4-bits per standard deviation (also equivalent to a 
-quantization factor of 16) but with an inverse hyperbolic sine transformation to concetrate 
+quantization factor of 16) but with an inverse hyperbolic sine transformation to concentrate 
 the sampling near the background level \citep{Wetal2016}.  Indeed, \citet{PWH2010} have 
 argued that none of the scientific information is lost in an astronomical image even with 
 fairly drastic quantization (at levels as high as 0.5$\sigma$).  The tests used by \citet{PWH2010} 
@@ -130,7 +130,7 @@ large fraction of the weight pixels cannot be tracked.
 
 We then measure the standard deviation (RMS) in each science and weight image ($\sigma_{{\rm I}_{\rm q}}$ 
 and $\sigma_{{\rm W}_{q}}$ respectively) to understand the fractional increase in the image noise
-from the quantization ( $\sigma_{\rm grow} = \sqrt(\sigma_{{\rm I}_{q}}^2 - \sigma_{{\rm I}_{0}}^2 )$.  
+from the quantization ( $\sigma_{\rm grow} = \sqrt{\sigma_{{\rm I}_{q}}^2 - \sigma_{{\rm I}_{0}}^2 }$.  
 Figures~\ref{image_difference} and \ref{weight_difference} show histograms of these metrics based
 on the images in this test set.  The left panels show the residual noise as measured from the difference
 between the unquantized and quantized images.  The right panels show the fractional additive noise 
@@ -158,7 +158,7 @@ accuracy (i.e.  $\sigma_{{\rm I}_{q}}$ differs from $\sigma_{{\rm I}_{0}}$ by le
 \subsection{Composite Image Benchmarks}
 
 Beside the individual images, the current tests construct a coadded patch.  
-Here, we compare the resulting coadd images constructured from the original, 
+Here, we compare the resulting coadd images constructed from the original, 
 never-compressed images with coadd images constructed from the quantized images.
 In the current limited test, only two coadded images (patches) were produced. 
 The comparison is further hampered both because the depth of these coadd images 
@@ -167,7 +167,7 @@ rejection algorithm is active within the pipeline. This comparison is similar to
 that made for the individual images except that a a constraint has been added to 
 remove locations where the clipping algorithm has systematically rejected a region 
 of an image (in the test set there were of order a few such regions per coadd image
-totalling comprised of a few times 10,000 pixels at q=4 dropping to ~1,000 pixels at q=64).
+totaling comprised of a few times 10,000 pixels at q=4 dropping to ~1,000 pixels at q=64).
 
 The results are summarized in Table~\ref{tab_agg_image_stat} which shows....
 the 
@@ -226,10 +226,10 @@ was used to subselect stellar/point-source measurements.
 The top two panels in each set show the total number of objects per flux bin, followed by a plot 
 showing the flux uncertainty as a function of flux from the never compressed image.  Beneath these 
 are plotted the difference between the measurements from the quantized images and the never-quantized 
-images with subsequent plots using an increasing level of quantization.  These differnce 
+images with subsequent plots using an increasing level of quantization.  These difference 
 plots are shown in units of $\sigma_{\rm F_0}$ (i.e. each difference measurement is scaled by the
 uncertainty in the flux measured in the unquantized image).  Overplotted are histograms showing the 
-diffence level that encompasses 50, 75, 90, and 99\% of the measurements as a function of flux bin.
+difference level that encompasses 50, 75, 90, and 99\% of the measurements as a function of flux bin.
 {\bf Remove 99\% histogram?}
 Careful examination of the histograms show that for quantization, q=16 or greater 50\% of all 
 flux measurements differ by less than 0.01$\sigma$ and 90% by less than 0.1$\sigma$ when 
@@ -248,7 +248,7 @@ compared to the measurements on the unquantized images.
 %        \label{fig:sub2}
     \end{minipage}
 \caption{Comparison of aperture (left) and PSF photometry (right) measurements resulting from forced photometry 
-on individual images with and without quantization/compression.  The top panel in each shows the distrubution 
+on individual images with and without quantization/compression.  The top panel in each shows the distribution 
 of objects as a function of their flux measured in the original image(s).  The second plots show measure uncertainties 
 for those flux measurements.  The panels below show the difference between the flux measurements made on the
 unquantized and quantized images divided by the uncertainty in the quantized images (in units of $\sigma_{\rm F_0}$.  
@@ -260,10 +260,10 @@ The histograms in each panel show the difference level at which 50, 75, 90 and 9
 
 
 Similar to the flux measurements, Figure~\ref{plot_cen_shape} shows comparisons of centroid
-and shape measuremnts (left and right panels, respectively) as a function of signal-to-noise
+and shape measurements (left and right panels, respectively) as a function of signal-to-noise
 (S/N) in the unquantized images.  For the centroids we use the {\it base\_SdssCentroid\_x} (x), and 
 {\it base\_SdssCentroid\_y} (y), to compute the linear offset 
-$X_q-X_0 = \sqrt{ (x_q-x_0)^2 + (y_q-y_0)^2}$ between the measurments
+$X_q-X_0 = \sqrt{ (x_q-x_0)^2 + (y_q-y_0)^2}$ between the measurements
 made in the quantized and unquantized images.  Note that the current version of forced photometry 
 does not flag poor and low signal-to-noise measurements so those measurements pollute/inflate the 
 distributions show in the low signal-to-noise portion of the centroid plots in Figure~\ref{plot_cen_shape}.
@@ -277,7 +277,7 @@ $\sigma_S^2 = (\frac{\partial S}{\partial I_{xx}})^2 \sigma_{I_{xx}}^2 +
 (\frac{\partial S}{\partial I_{yy}})^2 \sigma_{I_{yy}}^2 + 
 (\frac{\partial S}{\partial I_{xy}})^2 \sigma_{I_{xy}}^2$, and use the associated uncertainties
 to estimate $\sigma_S$.  Figure~\ref{plot_cen_shape} shows these measurements and makes a comparison
-of the quantized measurments to those found with the unquantized images.  Measurements with 
+of the quantized measurements to those found with the unquantized images.  Measurements with 
 {\it base\_SdssShape\_flag} have been excluded.
 
 Examination of the centroid plots in Figure~\ref{plot_cen_shape} show that for quantization of q=16 or
@@ -473,19 +473,19 @@ Below, our recommendations assume:
 
 With these in mind we recommend the following:
 \begin{enumerate}
-\item {\bf Quantization Factor:} Most scientific use cases should be satisfied by a quantization factor of q=16 or q=32.  This would provide XX, YY, ZZ as summarized in Table~{\bf Work for Tuesday 17th}. {\bf (Note this is being addressed now see \#2 in Section~\ref{sec_tbd}.)}
+\item {\bf Quantization Factor:} Most scientific use cases should be satisfied by a quantization factor of q=16 or q=32.  This would provide XX, YY, ZZ as summarized in Table~{\bf Work for Tuesday 17th}. {\bf (Note this is being addressed now see \#2 in Section~\ref{sec_tbd} along with other comments being considered.)}
 
-\item {\bf Algorithm:} The best performaning, off-the-shelf candidate for compression is BZIP2 which acheives a compression factor of 5-7.  Its main drawback is speed but in trading speed for compression factor the use of LZ or ZSTD would roughly double the storage costs. 
+\item {\bf Algorithm:} The best performing, off-the-shelf candidate for compression is BZIP2 which achieves a compression factor of 5-7.  Its main drawback is speed but in trading speed for compression factor the use of LZ or ZSTD would roughly double the storage costs. 
 
-\item {\bf When and where to use compress:}  Compression should occur after production but before archiving. 
+\item {\bf When and where to use lossy compression:}  Compression should occur after production but before archiving. 
 This ameliorates any risk that compression adversely impacts the ability of LSST to meet science requirements.  The availability of compressed products for
 users is meant to allow investigations to proceed without an explicit need for reprocessing.  
 
-\item {\bf Products:} PVI images are the clearest case where lossy compression should be considered as these products otherwise would not be stored or would require a large tape storage infrastructure.  Other products could be considered as a means to realize savings for storage and data transfer but tests would be needed and require working versions of the pipelines where such products might be used.
+\item {\bf PVI Products:} PVI images are the clearest case where lossy compression should be considered as these products otherwise would not be stored, requiring re-computation, or would require a large tape storage infrastructure. 
 
-\item {\bf Other uses:} With the advent of an Alert Processing pipeline, some attention should be paid to determine whether Pre-Covery measurements can meet requirements if lossy-compressed PVIs are used.  A similar test could be used to determine whether compressed templates adversely effect the difference pipeline.
+\item {\bf Other Products:} Within the data storage model there are a few other products that might be considered as candidates for lossy compression.  These are: the DRP COADD images, the AP templates, and the 60-day store of PVI images from the AP pipeline for PreCovery of transients.  The realized benefit of storing any of these with lossy compression is 100's of times smaller than the DRP PVI images.  Moreover, if lossy compression were used for any of these data types, there would be a direct impact on the production results.  Therefore we do NOT recommend use of lossy compression without a demonstration that its use would not prevent reaching survey requirements.  To do so requires a detailed test with working versions of the pipelines and real? LSST data. 
 
-\item {\bf Verification:} The current tests are not realized within the LSST framework or QA effort and they are moderately costly to make (they require production to be repeated for each level of quantization).  This is silly.  It is recommended that a means to implement tests similar to these that can be used with the still maturing LSST measurement algorithms be made available.}
+\item {\bf Verification:} The current tests are not realized within the LSST framework or QA effort and they are moderately costly to make (they require production to be repeated for each level of quantization).  It is recommended that a means to implement tests similar to those detailed here be considered so that as the pipelines and LSST measurement algorithms mature...
 
 \end{enumerate}
 
