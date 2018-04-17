@@ -1,4 +1,9 @@
-\documentclass[DM,lsstdraft,authoryear,toc]{lsstdoc}
+\documentclass[DM,lsstdraft,usenatbib,authoryear,toc]{lsstdoc}
+
+\usepackage{natbib}  % bibliography
+%% Journal abbreviations
+%\bibliographystyle{aasjournal}
+
 
 % Package imports go here
 
@@ -40,6 +45,6 @@ images that otherwise could not be stored for general retrieval and use by scien
 % Include all the relevant bib files.
 % lsst is for DocuShare and DMTN entries.
 % refs_ads is for entries coming from ADS.
-\bibliography{lsst,lsst-dm,refs,books,refs_ads}
+\bibliography{references,lsst,lsst-dm,refs,books,refs_ads}
 
 \end{document}
