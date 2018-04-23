@@ -203,8 +203,7 @@ the
 \end{table}
 
 
-
-
+\clearpage
 
 \subsection{Catalog/Measurement benchmarks}
 
@@ -229,11 +228,13 @@ are plotted the difference between the measurements from the quantized images an
 images with subsequent plots using an increasing level of quantization.  These difference 
 plots are shown in units of $\sigma_{\rm F_0}$ (i.e. each difference measurement is scaled by the
 uncertainty in the flux measured in the unquantized image).  Overplotted are histograms showing the 
-difference level that encompasses 50, 75, 90, and 99\% of the measurements as a function of flux bin.
-{\bf Remove 99\% histogram?}
-Careful examination of the histograms show that for quantization, q=16 or greater 50\% of all 
-flux measurements differ by less than 0.01$\sigma$ and 90% by less than 0.1$\sigma$ when 
-compared to the measurements on the unquantized images.
+difference level that encompasses 50, 75, 90, and 99\% of the measurements/objects as a function 
+of flux bin.  In Table~\ref{tab_se_flux_diff} we report the limiting difference that encompasses
+90\% of objects flux measurements for each quantization factor used in this investigation (the cyan
+histograms in Figure~\ref{plot_se_flux}).  From Table~\ref{tab_se_flux_diff} it can be seen
+that for $q=32$, 90\% of all PSF flux measurements differ by less than 0.1$\sigma$ for objects 
+with S/N=3 or higher.   Similarly, 90\% of all aperture flux measurements differ by less than 0.1$\sigma$
+for objects with S/N=5 or higher.
 
 \begin{figure}[t]
 \centering
@@ -258,6 +259,26 @@ The histograms in each panel show the difference level at which 50, 75, 90 and 9
 \label{plot_se_flux}
 \end{figure}
 
+\begin{table}[ht]
+\caption{Maximum Flux Difference (in units of $\sigma_{\rm F_0}$) for 90\% of Objects}
+\centering
+\begin{tabular}[]{c|rrrr|rrrr}
+\hline
+     &  \multicolumn{4}{c}{PSF Flux}  & \multicolumn{4}{c}{Aperture Flux} \\
+ q   &  S/N=3 & S/N=5 & S/N=10 & S/N=100 & S/N=3 & S/N=5 & S/N=10 & S/N=100  \\
+\hline
+   4 &  0.266 & 0.234 & 0.208  & 0.171 &   0.332 & 0.269 & 0.208 & 0.171 \\
+   8 &  0.161 & 0.136 & 0.110  & 0.087 &   0.220 & 0.170 & 0.113 & 0.089 \\
+  16 &  0.106 & 0.078 & 0.056  & 0.044 &   0.163 & 0.113 & 0.058 & 0.044 \\
+  32 &  0.074 & 0.050 & 0.031  & 0.022 &   0.117 & 0.068 & 0.033 & 0.022 \\
+  64 &  0.067 & 0.043 & 0.018  & 0.011 &   0.097 & 0.064 & 0.019 & 0.011 \\
+ 128 &  0.049 & 0.027 & 0.011  & 0.006 &   0.067 & 0.042 & 0.014 & 0.006 \\
+\hline
+\end{tabular}
+\label{tab_se_flux_diff}
+\end{table}
+
+
 
 Similar to the flux measurements, Figure~\ref{plot_cen_shape} shows comparisons of centroid
 and shape measurements (left and right panels, respectively) as a function of signal-to-noise
@@ -280,10 +301,11 @@ to estimate $\sigma_S$.  Figure~\ref{plot_cen_shape} shows these measurements an
 of the quantized measurements to those found with the unquantized images.  Measurements with 
 {\it base\_SdssShape\_flag} have been excluded.
 
-Examination of the centroid plots in Figure~\ref{plot_cen_shape} show that for quantization of q=16 or
-better the difference in centroid measurements is less than 0.1 pixels for 90\% of measurements for
-sources with S/N$>$10.  Similarly, for shape measurements the differences in $S$ are already less than 
-0.01 pixels for 90\% of objects at a S/N$>$10.  
+Similar to flux measurements, in Table~\ref{tab_se_cen_shape_diff} we report the limiting difference 
+that encompasses 90\% of objects centroid and shape differences (the cyan
+histograms in Figure~\ref{plot_cen_shape}).  From Table~\ref{tab_se_cen_shape_diff} it can be seen
+that for $q=16$, 90\% of all centroid measurements from sources with S/N=10 or higher differed by less
+than 0.1 pixel.  Similarly, at $q=16$, shapes/sizes differ by less than 0.1 pixel for S/N=5 or higher.
 
 \begin{figure}[t]
 \centering
@@ -320,8 +342,28 @@ are in units of pixel offset and pixel radius for the centroid and shape measure
 %\label{plot_shape}
 %\end{figure}
 
+\begin{table}
+\caption{Maximum Centroid and Shape Difference for 90\% of Objects}
+\centering
+\begin{tabular}[]{c|rrrr|rrrr}
+\hline
+     &  \multicolumn{4}{c}{Centroid}  & \multicolumn{4}{c}{Shape} \\
+ q   &  S/N=3 & S/N=5 & S/N=10 & S/N=100 & S/N=3 & S/N=5 & S/N=10 & S/N=100  \\
+\hline
+   4 & 1.791 & 0.898 & 0.269  & 0.013 &  0.370 & 0.231 & 0.112  & 0.010 \\
+   8 & 1.364 & 0.590 & 0.129  & 0.007 &  0.183 & 0.118 & 0.058  & 0.005 \\
+  16 & 1.063 & 0.375 & 0.066  & 0.003 &  0.255 & 0.083 & 0.030  & 0.002 \\
+  32 & 0.778 & 0.276 & 0.039  & 0.002 &  0.136 & 0.039 & 0.016  & 0.001 \\
+  64 & 0.704 & 0.258 & 0.036  & 0.001 &  0.080 & 0.030 & 0.009  & 0.001 \\
+ 128 & 0.540 & 0.169 & 0.029  & $<$0.001 &  0.066 & 0.029 & 0.006  & $<$0.001 \\
+\hline
+\end{tabular}
+\label{tab_se_cen_shape_diff}
+\end{table}
 
 
+
+\clearpage
 
 \subsection{Catalog/Measurement from COADD images constructed from quantized PVI images}
 
@@ -365,8 +407,49 @@ Figures~\ref{plot_coadd_flux} through \ref{plot_coadd_cen_shape} show the result
 \end{figure}
 
 
+\begin{table}[ht]
+\caption{Maximum Flux Difference (in units of $\sigma_{\rm F_0}$) for 90\% of COADD Objects}
+\centering
+\begin{tabular}[]{c|rrrr|rrrr}
+\hline
+     &  \multicolumn{4}{c}{PSF Flux}  & \multicolumn{4}{c}{Aperture Flux} \\
+ q   &  S/N=3 & S/N=5 & S/N=10 & S/N=100 & S/N=3 & S/N=5 & S/N=10 & S/N=100  \\
+\hline
+   4 & 0.399 & 0.296 & 0.264 &  0.225   &  0.443 & 0.392 & 0.291 &  0.208 \\
+   8 & 0.296 & 0.193 & 0.181 &  0.152   &  0.281 & 0.255 & 0.184 &  0.140 \\
+  16 & 0.234 & 0.142 & 0.128 &  0.107   &  0.237 & 0.186 & 0.120 &  0.089 \\
+  32 & 0.182 & 0.114 & 0.107 &  0.086   &  0.174 & 0.147 & 0.103 &  0.077 \\
+  64 & 0.193 & 0.107 & 0.102 &  0.083   &  0.156 & 0.126 & 0.096 &  0.071 \\
+ 128 & 0.114 & 0.034 & 0.019 &  0.024   &  0.080 & 0.067 & 0.030 &  0.010 \\
+\hline
+\end{tabular}
+\label{tab_coadd_flux_diff}
+\end{table}
 
 
+
+\begin{table}
+\caption{Maximum Centroid and Shape Difference for 90\% of COADD Objects}
+\centering
+\begin{tabular}[]{c|rrrr|rrrr}
+\hline
+     &  \multicolumn{4}{c}{Centroid}  & \multicolumn{4}{c}{Shape} \\
+ q   &  S/N=3 & S/N=5 & S/N=10 & S/N=100 & S/N=3 & S/N=5 & S/N=10 & S/N=100  \\
+\hline
+   4 & 1.857 & 1.077 & 0.414 &  0.020   &  0.155 & 0.181 & 0.120 &  0.008 \\
+   8 & 1.185 & 0.677 & 0.281 &  0.015   &  0.144 & 0.113 & 0.098 &  0.006 \\
+  16 & 1.094 & 0.506 & 0.191 &  0.011   &  0.116 & 0.071 & 0.056 &  0.004 \\
+  32 & 0.856 & 0.353 & 0.142 &  0.009   &  0.075 & 0.057 & 0.049 &  0.003 \\
+  64 & 0.827 & 0.284 & 0.114 &  0.008   &  0.070 & 0.053 & 0.045 &  0.004 \\
+ 128 & 0.652 & 0.156 & 0.073 &  0.006   &  0.029 & 0.010 & 0.005 &  $>$0.001 \\
+\hline
+\end{tabular}
+\label{tab_coadd_cen_shape_diff}
+\end{table}
+
+
+
+\clearpage
 
 \subsection{Compression Algorithm benchmarks}
 
