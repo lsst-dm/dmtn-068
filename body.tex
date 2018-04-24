@@ -51,7 +51,7 @@ vignetting causes a portion of the detector unusable for science.  These regions
 masked and present very different noise characteristics but are useful because they show some 
 caveats that must be considered when applying compression.
 
-As part of this investigation we have separated the loss from the actual compression algorithm.
+In this investigation we have separated the loss from the actual compression algorithm.
 A change has been injected into the pipeline that allows for a quantization to be applied
 to the science (and weight) images that are traditionally stored as floats.  Formally,
 the quantization factor, q, determines the number of samples/subdivisions of some set
@@ -60,7 +60,7 @@ detected source.  For a FITS image this is expressed as a scale factor (BSCALE) 
 pixel values are converted to the nearest integer multiple of this factor.  We then use existing
 loss-less compression algorithms to compress the integer representation of the image
 to achieve a compressed image.  Our tests varied the factor q from 4 to 128 (stepping by 
-factors of 2).
+factors of 2).  
 
 Metrics are then obtained to understand the impact and efficacy of compression.  Broadly, 
 these fall into three categories:
@@ -83,6 +83,7 @@ the changes that might be expected when compressed products are combined to form
 images from which astronomical source measurements are also obtained.
 
 
+
 \section{Results}
 
 \subsection{Single Image Compression Benchmarks}
@@ -92,111 +93,190 @@ and weight images (I$_{0}$, W$_{0}$) and the quantized versions (I$_{\rm q}$, W$
 The algorithms used are independent of those that performed the estimates used to set the quantization.
 In most cases we consider only pixels with FLAG=0 or FLAG=32 (which indicates the presence of a source)
 as heavily masked regions often have values (particularly in the weight image) that can exceed the 
-range accessible in the quantized images.  Figure~\ref{pixel_dist} shows the distributions of pixels
-values for the science and weight planes from two images typical of those in the test set.
+range accessible in the quantized images.  
 
-\begin{figure}
+Figure~\ref{pixel_dist} shows the detailed distribution of pixels values for the science and weight planes 
+from two images typical of those in the test set.  The first is a typical image, while the second is atypical
+in that the image comes from the edge of the HSC focal plane where vignetting and hence significant masking 
+occurs.  The difference in the distribution are most apparent in the weights, where it becomes clear that
+for the quantization/noise-estimation algorithms to behave consistently, flagged pixels need to be rejected.
+A modest amount a caution should be exercised so that image compression acts consistently.  Moreover, it should
+noted that flagged data might have very different characteristics after quantization is applied
+and their behavior if included in measurements would perform worse than what is seen in the further tests
+made in this exercise.  The distributions being considered when determining the quantization factor exclude
+all masked pixels (i.e. "mall" and "wmall") but the distributions being analyzed in this work need to understand
+the effect on pixels with objects/sources, so we typically include pixels with FLAG=32 (i.e. "mn32" and "wmn32").
+
+Table~\ref{tab_bscale} summarizes the effect of quantization on the original images.  There we include 
+the range of BSCALE's (the quantization factor that resulted) for both the science and weight image planes
+and then further examine the RMS in the images and examine the fractional increase when compariing the 
+measuruement on the quantized and un-quantized versions of the image.  The RMS values for the "Original"
+images are not the same as that used when setting BSCALE (for the quantization) because RMS values
+draw from distributions that include the source pixels (i.e. FLAG=32).  Note that as early as a quantization
+factor of q=32, but clearly at q=128, the change in the RMS of the images cannot be well measured 
+because the accuracy needed is not available when considering science and weight images comprised 
+of 32-bit floats.
+
+\begin{figure}[t]
 \centering
   \begin{minipage}{.45\textwidth}
     \centering
-    \includegraphics[width=1.0\textwidth]{figure/imgdist_CORR-0903334-016.fits.png}
+    \includegraphics[width=0.9\textwidth]{figure/imgdist_CORR-0903334-016.fits.png}
 %    \label{fig:sub1}
   \end{minipage}
   \begin{minipage}{.45\textwidth}
     \centering
-    \includegraphics[width=1.0\textwidth]{figure/imgdist_CORR-0903334-100.fits.png}
+    \includegraphics[width=0.9\textwidth]{figure/imgdist_CORR-0903334-100.fits.png}
 %   \label{fig:sub2}
   \end{minipage}
-\caption{Distributions of pixel values from two images in the test set. The left set of panels show 
-distributions for a ``normal image'', while the right panels show the distributions for an image near the edge 
+\vspace{-32pt}
+\caption{Distributions of pixel values from two images in the test set. The left panels show 
+distributions from a ``normal image'', while the right panels are for an image near the edge 
 of the focal plane with heavy masking.  (top) to (bottom) the panels show: all science plane pixels (all), 
 all science pixels with MASK=0 or 32 (mn23), and all unmasked pixels (mall), followed by similar
-distributions for the weight plane (wall, wmn32, and wmall).  Note the "mall" and "wmall" are roughly
-the distribution that was used to estimate the quantization level.}
+distributions for the weight plane (wall, wmn32, and wmall).  The "mall" and "wmall" are roughly
+the distribution used to estimate the quantization level while "mn32" and "wmn32" are those used
+when considering the difference due to quantization.}
 \label{pixel_dist}
 \end{figure}
 
-A base level check is made that examines the difference between the quantized and unquantized version
-of an image (${\rm I}_{\rm diff} = {\rm I}_{\rm q}-{\rm I}_{\rm 0}$).  First the mean, 
+\begin{table}
+\caption{Summary of BSCALE Values that Resulted in this Test}
+\footnotesize
+\centering
+\begin{tabular}[]{c|cccc|cccc}
+\hline
+        &  \multicolumn{4}{c}{Science Plane} & \multicolumn{4}{c}{Weight Plane} \\
+        &   Min--Max & Median & Median & \% RMS  & Min-Max & Median & Median &  \% RMS \\
+ q      &    BSCALE  & BSCALE &  RMS   & Growth  &  BSCALE & BSCALE & RMS    &  Growth \\
+\hline
+\multicolumn{9}{c}{Sample 1 (HSC-R images)}  \\
+\hline
+ None   &              &       & 7.281  &         &              &       & 2.327 &          \\
+    4   & 1.665--2.056 & 1.851 & 7.298  & 0.229 & 0.368--0.977 & 0.605 & 2.337 & 0.417  \\
+    8   & 0.832--1.028 & 0.926 & 7.294  & 0.175 & 0.184--0.489 & 0.303 & 2.336 & 0.374  \\
+   16   & 0.416--0.514 & 0.463 & 7.290  & 0.126 & 0.092--0.244 & 0.151 & 2.330 & 0.120  \\
+   32   & 0.208--0.257 & 0.231 & 7.283  & 0.029 & 0.046--0.122 & 0.076 & 2.327 & $<$0.001  \\
+   64   & 0.104--0.129 & 0.116 & 7.282  & 0.013 & 0.023--0.061 & 0.038 & 2.327 & 0.012  \\
+  128   & 0.052--0.064 & 0.058 & 7.280  & $<$0.001 & 0.012--0.031 & 0.019 & 2.327 & $<$0.001  \\
+\hline 
+\multicolumn{9}{c}{Sample 2 (HSC-I images)}  \\
+\hline
+ None   &              &       & 12.471 &         &              &       & 3.925 &          \\
+    4   & 3.012--3.420 & 3.226 & 12.516 & 0.357 & 0.789--1.569 & 1.046 & 3.938 & 0.351  \\
+    8   & 1.506--1.710 & 1.613 & 12.497 & 0.201 & 0.395--0.784 & 0.523 & 3.934 & 0.229  \\
+   16   & 0.753--0.855 & 0.807 & 12.485 & 0.112 & 0.197--0.392 & 0.261 & 3.926 & 0.034  \\
+   32   & 0.376--0.428 & 0.403 & 12.473 & 0.009 & 0.099--0.196 & 0.131 & 3.925 & 0.008  \\
+   64   & 0.188--0.214 & 0.202 & 12.473 & 0.015 & 0.049--0.098 & 0.065 & 3.924 & $<$0.001  \\
+  128   & 0.094--0.107 & 0.101 & 12.472 & 0.001 & 0.025--0.049 & 0.033 & 3.924 & $<$0.001  \\
+\hline
+\end{tabular}
+\label{tab_bscale}
+\end{table}
+
+Beyond the bulk comparison, we have also made check to examine the detailed differences between the 
+quantized and unquantized version of an image (${\rm I}_{\rm diff} = {\rm I}_{\rm q}-{\rm I}_{\rm 0}$).  First the mean, 
 $\bar{\rm I}_{\rm diff}$, and RMS, $\sigma_{{\rm I}_{\rm diff}}$, are computed to show that no
 systematic offset occurs and that the noise in the difference is indeed less than the scale factor.
 We then also search for pixels where the difference exceeds the quantization level.  For most images
 this latter value is identically zero but in a small number of cases the pixels in a bright object
 will exceed the range available in the quantized image (i.e. the integer representation has insufficient
-cardinality to track the dynamic range in the image).  If flagged pixels are included, then are typically
-more pixels that exceed this range and in the worst cases (e.g. images from CCDs that are vignetted) a
-large fraction of the weight pixels cannot be tracked.
-{\bf More needed to quantitatively describe these?}
+cardinality to track the dynamic range in the image).  If flagged pixels are included, then there 
+are typically more pixels that exceed this range and in the worst cases (e.g. images from CCDs that 
+are vignetted) a large fraction of the weight pixels cannot be tracked.
 
 We then measure the standard deviation (RMS) in each science and weight image ($\sigma_{{\rm I}_{\rm q}}$ 
 and $\sigma_{{\rm W}_{q}}$ respectively) to understand the fractional increase in the image noise
 from the quantization ( $\sigma_{\rm grow} = \sqrt{\sigma_{{\rm I}_{q}}^2 - \sigma_{{\rm I}_{0}}^2 }$.  
-Figures~\ref{image_difference} and \ref{weight_difference} show histograms of these metrics based
+Figure~\ref{image_difference} show histograms of these metrics based
 on the images in this test set.  The left panels show the residual noise as measured from the difference
 between the unquantized and quantized images.  The right panels show the fractional additive noise 
 resulting from the quantization.  Note that the number of samples in the histograms for q=64 and 128 
 are smaller than the total because the measurement of the standard deviation is approaching the machine 
 accuracy (i.e.  $\sigma_{{\rm I}_{q}}$ differs from $\sigma_{{\rm I}_{0}}$ by less than a part in 10$^{6}$).
 
-\begin{figure}
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.75\textwidth]{figure/compression_metric_v2.png}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=0.95\textwidth]{figure/compression_metric_v2.png}
+%        \label{fig:sub1}
+    \end{minipage}
+    \begin{minipage}{.49\textwidth}
+        \centering
+        \includegraphics[width=0.95\textwidth]{figure/compression_metric_v2w.png}
+%        \label{fig:sub2}
+    \end{minipage}
 \caption{Histograms showing image level statistics with respect to the original compressed image.
-(left panels) are histograms showing the RMS of the difference between the compressed and original image. 
-(right panels) are histograms of the fractional increase in the noise with respect to the original image.}
+(left two panels) are histograms showing the RMS of the difference between the quantized and original images, 
+and the fractional increase in the noise with respect to the original images.  The (right two panels) are the
+same analysis but carried out for the weight planes.}
 \label{image_difference}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figure/compression_metric_v2w.png}
-\caption{Similar to Figure~\ref{image_difference} but for the weight image.}
-\label{weight_difference}
-\end{figure}
 
+\clearpage
 
 \subsection{Composite Image Benchmarks}
 
 Beside the individual images, the current tests construct a coadded patch.  
-Here, we compare the resulting coadd images constructed from the original, 
+To be clear, this should not be mistaken for constructing, a coadded patch, 
+then quantizing, then repeating the previous analysis.  Here the focus is to
+understand how properties of the coadd images change when they are constructed
+using quantized image products. 
+
+To do this we compare coadd images constructed from the original, 
 never-compressed images with coadd images constructed from the quantized images.
-In the current limited test, only two coadded images (patches) were produced. 
+In the current limited test, only two coadded images were produced (a single patch 
+with two bands) thus the we have only two samples to examine. 
 The comparison is further hampered both because the depth of these coadd images 
-is shallow (there are only 5 or 6 visits being combined per coadd) and an outlier 
-rejection algorithm is active within the pipeline. This comparison is similar to 
-that made for the individual images except that a a constraint has been added to 
+is shallow (there are only 5 or 6 visits being combined per coadd compared to 100's 
+or even 1000's that can be expected from LSST) and to complicate matters further,
+the images are no longer in counts (they have been scaled based on a photometric
+calibration) and an outlier rejection algorithm is active within the pipeline. 
+
+Besides these caveats, the comparison at the image level is similar to that made for 
+the individual images except that a a constraint has been added to 
 remove locations where the clipping algorithm has systematically rejected a region 
 of an image (in the test set there were of order a few such regions per coadd image
 totaling comprised of a few times 10,000 pixels at q=4 dropping to ~1,000 pixels at q=64).
+Since there are only two samples, the results are summarized in Table~\ref{tab_agg_image_stat}.
 
-The results are summarized in Table~\ref{tab_agg_image_stat} which shows....
-the 
-% Currently this looks for 20-sigma outliers in the difference between quantized and unquantized (using clipped median and std-deviation) 
+% Currently that rejection algorithn looks for 20-sigma outliers in the difference between quantized and unquantized (using clipped median and std-deviation) 
+
+Table~\ref{tab_agg_image_stat} summarizes the pixel-level differences.  The actual RMS
+in the coadd image does not vary substantially.  However, when the difference between
+the coadds constructed from unquantized and quantized images are considered the residual
+is comprised of roughly Gaussian disribution but with an underlying broader distribution
+that has roughly 10 times the width but 100-1000 times less amplitude.  In Table~\ref{tab_agg_image_stat}
+we summarize the width/extent by tracking the min and max differences seen in the image/weight
+planes.
 
 \begin{table}
 \caption{Differences in Coadd Images Constructed from Quantized Images}
 \centering
-\begin{tabular}[]{crrrrrrrr}
+\begin{tabular}[]{c|rrr|rrr}
 \hline
- q        &  med($\delta_I$) & std($\delta_I$) & min($\delta_I$) & max($\delta_I$) & med($\delta_W$) & std($\delta_W$) & min($\delta_W$) & max($\delta_W$) \\
+          &  \multicolumn{3}{c}{Science Plane} & \multicolumn{3}{c}{Weight Plane} \\
+ q        &  std($I_{\rm diff}$) & min($I_{\rm diff}$) & max($I_{\rm diff}$) & std($W_{\rm diff}$) & min($W_{\rm diff}$) & max($W_{\rm diff}$) \\
 \hline
-\multicolumn{9}{c}{Sample 1 (HSC-R coadd)}  \\
+\multicolumn{7}{c}{Sample 1: HSC-R coadd ($I_{RMS}=0.134$, $W_{RMS}=0.0037$)}  \\
 \hline
-  q4    &  3.6$\times 10^{-5}$ & 1.3$\times 10^{-2}$ & -1.1$\times 10^{-1}$ & 9.0$\times 10^{-2}$ & $<10^{-6}$ & 3.8$\times 10^{-5}$ & -5.7$\times 10^{-4}$ & 5.7$\times 10^{-4}$ \\ 
-  q8    & -4.0$\times 10^{-6}$ & 6.6$\times 10^{-3}$ & -5.3$\times 10^{-2}$ & 4.2$\times 10^{-2}$ & $<10^{-6}$ & 1.9$\times 10^{-5}$ & -2.8$\times 10^{-4}$ & 2.8$\times 10^{-4}$ \\
-  q16   & -1.1$\times 10^{-5}$ & 3.3$\times 10^{-3}$ & -2.4$\times 10^{-2}$ & 2.1$\times 10^{-2}$ & $<10^{-6}$ & 1.0$\times 10^{-5}$ & -1.4$\times 10^{-4}$ & 1.4$\times 10^{-4}$ \\
-  q32   &  3.0$\times 10^{-6}$ & 1.7$\times 10^{-3}$ & -1.4$\times 10^{-2}$ & 1.4$\times 10^{-2}$ & $<10^{-6}$ & 5.0$\times 10^{-6}$ & -7.1$\times 10^{-5}$ & 7.1$\times 10^{-5}$ \\
-  q64   &  6.0$\times 10^{-6}$ & 8.3$\times 10^{-4}$ & -6.5$\times 10^{-3}$ & 5.6$\times 10^{-3}$ & $<10^{-6}$ & 2.0$\times 10^{-6}$ & -3.6$\times 10^{-5}$ & 3.6$\times 10^{-5}$ \\
-  q128  &  2.0$\times 10^{-6}$ & 4.1$\times 10^{-4}$ & -3.4$\times 10^{-3}$ & 3.4$\times 10^{-3}$ & $<10^{-6}$ & 1.0$\times 10^{-6}$ & -1.8$\times 10^{-5}$ & 1.8$\times 10^{-5}$ \\
+  4    &  1.3$\times 10^{-2}$ & -1.1$\times 10^{-1}$ & 9.0$\times 10^{-2}$ &  3.8$\times 10^{-5}$ & -5.7$\times 10^{-4}$ & 5.7$\times 10^{-4}$ \\ 
+  8    &  6.6$\times 10^{-3}$ & -5.3$\times 10^{-2}$ & 4.2$\times 10^{-2}$ &  1.9$\times 10^{-5}$ & -2.8$\times 10^{-4}$ & 2.8$\times 10^{-4}$ \\
+  16   &  3.3$\times 10^{-3}$ & -2.4$\times 10^{-2}$ & 2.1$\times 10^{-2}$ &  1.0$\times 10^{-5}$ & -1.4$\times 10^{-4}$ & 1.4$\times 10^{-4}$ \\
+  32   &  1.7$\times 10^{-3}$ & -1.4$\times 10^{-2}$ & 1.4$\times 10^{-2}$ &  5.0$\times 10^{-6}$ & -7.1$\times 10^{-5}$ & 7.1$\times 10^{-5}$ \\
+  64   &  8.3$\times 10^{-4}$ & -6.5$\times 10^{-3}$ & 5.6$\times 10^{-3}$ &  2.0$\times 10^{-6}$ & -3.6$\times 10^{-5}$ & 3.6$\times 10^{-5}$ \\
+  128  &  4.1$\times 10^{-4}$ & -3.4$\times 10^{-3}$ & 3.4$\times 10^{-3}$ &  1.0$\times 10^{-6}$ & -1.8$\times 10^{-5}$ & 1.8$\times 10^{-5}$ \\
 \hline 
-\multicolumn{9}{c}{Sample 2 (HSC-I coadd)}  \\
+\multicolumn{7}{c}{Sample 2: HSC-I coadd ($I_{RMS}=0.232$, $W_{RMS}=0.0076$)}  \\
 \hline
-  q4    &  4.4$\times 10^{-5}$ & 2.3$\times 10^{-2}$ & -1.7$\times 10^{-1}$ & 1.7$\times 10^{-1}$ & $<10^{-6}$ & 8.0$\times 10^{-5}$ & -1.1$\times 10^{-3}$ & 1.1$\times 10^{-3}$ \\
-  q8    & -3.8$\times 10^{-4}$ & 1.2$\times 10^{-2}$ & -8.9$\times 10^{-2}$ & 8.4$\times 10^{-2}$ & $<10^{-6}$ & 4.0$\times 10^{-5}$ & -5.6$\times 10^{-4}$ & 5.6$\times 10^{-4}$ \\
-  q16   & -3.4$\times 10^{-4}$ & 5.9$\times 10^{-3}$ & -4.3$\times 10^{-2}$ & 4.6$\times 10^{-2}$ & $<10^{-6}$ & 2.0$\times 10^{-5}$ & -2.8$\times 10^{-4}$ & 2.8$\times 10^{-4}$ \\
-  q32   & -3.3$\times 10^{-4}$ & 3.1$\times 10^{-3}$ & -2.5$\times 10^{-2}$ & 2.5$\times 10^{-2}$ & $<10^{-6}$ & 1.0$\times 10^{-5}$ & -1.4$\times 10^{-4}$ & 1.4$\times 10^{-4}$ \\
-  q64   & -3.3$\times 10^{-4}$ & 1.8$\times 10^{-3}$ & -1.8$\times 10^{-2}$ & 1.7$\times 10^{-2}$ & $<10^{-6}$ & 5.0$\times 10^{-6}$ & -7.0$\times 10^{-5}$ & 7.0$\times 10^{-5}$ \\
-  q128  & -4.0$\times 10^{-6}$ & 7.3$\times 10^{-4}$ & -5.9$\times 10^{-3}$ & 5.2$\times 10^{-3}$ & $<10^{-6}$ & 2.0$\times 10^{-6}$ & -3.5$\times 10^{-5}$ & 3.5$\times 10^{-5}$ \\
+  4    &  2.3$\times 10^{-2}$ & -1.7$\times 10^{-1}$ & 1.7$\times 10^{-1}$ &  8.0$\times 10^{-5}$ & -1.1$\times 10^{-3}$ & 1.1$\times 10^{-3}$ \\
+  8    &  1.2$\times 10^{-2}$ & -8.9$\times 10^{-2}$ & 8.4$\times 10^{-2}$ &  4.0$\times 10^{-5}$ & -5.6$\times 10^{-4}$ & 5.6$\times 10^{-4}$ \\
+  16   &  5.9$\times 10^{-3}$ & -4.3$\times 10^{-2}$ & 4.6$\times 10^{-2}$ &  2.0$\times 10^{-5}$ & -2.8$\times 10^{-4}$ & 2.8$\times 10^{-4}$ \\
+  32   &  3.1$\times 10^{-3}$ & -2.5$\times 10^{-2}$ & 2.5$\times 10^{-2}$ &  1.0$\times 10^{-5}$ & -1.4$\times 10^{-4}$ & 1.4$\times 10^{-4}$ \\
+  64   &  1.8$\times 10^{-3}$ & -1.8$\times 10^{-2}$ & 1.7$\times 10^{-2}$ &  5.0$\times 10^{-6}$ & -7.0$\times 10^{-5}$ & 7.0$\times 10^{-5}$ \\
+  128  &  7.3$\times 10^{-4}$ & -5.9$\times 10^{-3}$ & 5.2$\times 10^{-3}$ &  2.0$\times 10^{-6}$ & -3.5$\times 10^{-5}$ & 3.5$\times 10^{-5}$ \\
 \hline
 \end{tabular}
 \label{tab_agg_image_stat}
@@ -277,7 +357,6 @@ The histograms in each panel show the difference level at which 50, 75, 90 and 9
 \end{tabular}
 \label{tab_se_flux_diff}
 \end{table}
-
 
 
 Similar to the flux measurements, Figure~\ref{plot_cen_shape} shows comparisons of centroid
@@ -451,7 +530,7 @@ Figures~\ref{plot_coadd_flux} through \ref{plot_coadd_cen_shape} show the result
 
 \clearpage
 
-\subsection{Compression Algorithm benchmarks}
+\section{Compression Algorithm benchmarks}
 
 We have applied a variety of existing compression algorithms to the quantized images from this study to 
 obtain benchmarks of their efficacy.  The values reported reflect those algorithms' performance when
@@ -544,6 +623,7 @@ was available the threading was set to use 4 cores.
 
 %\section{Mapping Measurements to SRD?}
 
+\clearpage
 
 \section{Recommendations}
 
