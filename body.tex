@@ -380,9 +380,9 @@ to estimate $\sigma_S$.  Figure~\ref{plot_cen_shape} shows these measurements an
 of the quantized measurements to those found with the unquantized images.  Measurements with 
 {\it base\_SdssShape\_flag} have been excluded.
 
-Similar to flux measurements, in Table~\ref{tab_se_cen_shape_diff} we report the limiting difference 
-that encompasses 90\% of objects centroid and shape differences (the cyan
-histograms in Figure~\ref{plot_cen_shape}).  From Table~\ref{tab_se_cen_shape_diff} it can be seen
+In Table~\ref{tab_se_cen_shape_diff} we summarize the limiting difference that encompasses 90\% of 
+objects centroid and shape differences (the cyan histograms in Figure~\ref{plot_cen_shape}).  
+From Table~\ref{tab_se_cen_shape_diff} it can be seen
 that for $q=16$, 90\% of all centroid measurements from sources with S/N=10 or higher differed by less
 than 0.1 pixel.  Similarly, at $q=16$, shapes/sizes differ by less than 0.1 pixel for S/N=5 or higher.
 
@@ -403,23 +403,6 @@ of the signal-to-noise ratio of the unquantized measurements.  The differences i
 are in units of pixel offset and pixel radius for the centroid and shape measurements, respectively.}
 \label{plot_cen_shape}
 \end{figure}
-
-%
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssCentroid_HSC-I.png}
-%\caption{Similar to Figures~\ref{plot_app_flux}\&\ref{plot_psf_flux} but for centroid measurements as function of the signal-to-noise ratio
-%of the unquantized measurements.  The differences in the lower panels are in units of pixel offset.}
-%\label{plot_cen}
-%\end{figure}
-%
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.75\textwidth]{figure/rplot_all_base_SdssShape_HSC-I.png}
-%\caption{Similar to Figure~\ref{plot_cen} but for the SDSS shape measurments.  The comparison is made using the quantity S which is equivalent to
-%a size/radius.}
-%\label{plot_shape}
-%\end{figure}
 
 \begin{table}
 \caption{Maximum Centroid and Shape Difference for 90\% of Objects}
@@ -447,10 +430,25 @@ are in units of pixel offset and pixel radius for the centroid and shape measure
 \subsection{Catalog/Measurement from COADD images constructed from quantized PVI images}
 
 Similar to the comparisons made for the individual images, we compare the catalog measurements from the coadded patch
-that was constructed from the never-quantized and the quantized PVI images.  Note, no further quantization/loss was applied
-to the COADD images.  The same four quantities were examined (aperture flux, PSF flux, centroid, and shape).  
-Figures~\ref{plot_coadd_flux} through \ref{plot_coadd_cen_shape} show the results of that comparison.
+that was constructed from the never-quantized and the quantized PVI images.  The same four quantities were examined 
+(aperture flux, PSF flux, centroid, and shape).  Figures~\ref{plot_coadd_flux} and \ref{plot_coadd_cen_shape} show
+the results of that comparison and Tables~\ref{tab_coadd_flux_diff} and \ref{tab_coadd_cen_shape_diff} report the 
+limiting difference that encompasses 90\% of objects measurments.
 
+Based on the results in Table~\ref{tab_coadd_flux_diff} it can be seen that for coadds constructed from images 
+with $q=64$, 90\% of all PSF and aperture flux measurements differ by less than 0.1$\sigma$ for objects 
+with S/N=10 or higher.  While this does suggest that lower quantization factors (and higher compression factors)
+might be less desirable, it should be noted that these coadds, comprised of only a few visit images, are extreme 
+cases compared to those that would result from the LSST survey (with many 100's of images per band at each location
+in the survey footprint).  Clearly a more realistic test should be implemented.
+
+The difference measured in the centroids and shapes show a somewhat different trend.  Considering the 
+vales in Table~\ref{tab_coadd_cen_shape_diff} the quantization also seems to make modest differences on 
+the centroid measurements but the shapes show much smaller changes.  For coadds constructed with q=64, 90\% 
+of objects with S/N=10 are recovered with differences of less than 0.1 pixels (whereas the single-image
+measurments reached the same benchmark for q=16).  On the other hand, the shape measurements for objects with
+S/N=5 match those in the coadds constructed from un-quantized images for q=16 (similar to what was found 
+for the single-image measurments).
 
 \begin{figure}[t]
 \centering
@@ -506,7 +504,6 @@ Figures~\ref{plot_coadd_flux} through \ref{plot_coadd_cen_shape} show the result
 \end{table}
 
 
-
 \begin{table}
 \caption{Maximum Centroid and Shape Difference for 90\% of COADD Objects}
 \centering
@@ -526,6 +523,7 @@ Figures~\ref{plot_coadd_flux} through \ref{plot_coadd_cen_shape} show the result
 \label{tab_coadd_cen_shape_diff}
 \end{table}
 
+\subsection{Lost Objects}
 
 
 \clearpage
@@ -621,34 +619,77 @@ was available the threading was set to use 4 cores.
 \end{table}
 
 
-%\section{Mapping Measurements to SRD?}
-
 \clearpage
 
 \section{Recommendations}
 
+Originally the intent of this investigation was to match these results to requirements within the 
+LSST SRD \citedsp{LPM-17}.  This has proven relatively difficult.  For the fluxes, the measured 
+changes found in this test are much smaller than their associated uncertainties.  Moreover, the
+uncertainties on the measurements from the quantized images, while different on an object-by-object
+sense, do not show a systematic increase when quantization is applied.  Therefore it is not clear 
+that we can even make a statement about the contribution to the error budget leading to any given 
+requirement.
+
+In this test measurements made on quantized images do not show systematic differences or systematic 
+increases in their undercertainties when compared to the same measurements made on the original data.  
+The differences do systematically decrease as the degree of quantization increases (higher values of q).
+
+
 Below, our recommendations assume:
 \begin{itemize}
-\item The capability to recompute a reduced-calibrated image product on-the-fly will be possible for users that need such.
-\item Astronomers have the scientific acumen to understand that measurements and products made using lossy-compressed images will not exactly match those made during release production.
-\item The tests in this note are inadequate in a couple of respects.  The measurement algorithms are not those that will be deployed in the LSST Alert and Data Release Processing. The COADD images/catalogs in the current tests are comprised of a small amount of data and therefore cover a small area with shallow depth.  In order to have a detailed understanding of the impact of compression a much larger dataset than a {\it ci\_hsc} would be needed.
+
+\item The capability to recompute a reduced-calibrated image product on-the-fly will be 
+possible for users that need such.
+
+\item Astronomers have the scientific acumen to understand that measurements and products 
+made using lossy-compressed images will not exactly match those made during release production.
+
+\item The tests in this note are inadequate in a couple of respects.  The measurement
+algorithms are not those that will be deployed in the LSST Alert and Data Release Processing.
+The COADD images/catalogs in the current tests are comprised of a small amount of data
+and therefore cover a small area and are comprised of 10 to 100 times fewer images than 
+will be the case in the LSST survey.  In order to have a detailed understanding
+of the impact of compression a much larger dataset than {\it ci\_hsc} is needed.
+
 \end{itemize}
+
 
 With these in mind we recommend the following:
 \begin{enumerate}
-\item {\bf Quantization Factor:} Most scientific use cases should be satisfied by a quantization factor of q=16 or q=32.  This would provide XX, YY, ZZ as summarized in Table~{\bf Work for Tuesday 17th}. {\bf (Note this is being addressed now see \#2 in Section~\ref{sec_tbd} along with other comments being considered.)}
+\item {\bf Overall:} A lossy compression can certainly be used by LSST to store products that would 
+not otherwise have been available to scientists. Data Release Processing (DRP) PVI images are the 
+clearest case where lossy compression should be considered as these products otherwise would not be stored, 
+requiring re-computation, or would require a large tape storage infrastructure. 
 
-\item {\bf Algorithm:} The best performing, off-the-shelf candidate for compression is BZIP2 which achieves a compression factor of 5-7.  Its main drawback is speed but in trading speed for compression factor the use of LZ or ZSTD would roughly double the storage costs. 
+\item {\bf Quantization Factor:} Most scientific use cases should be satisfied by a quantization 
+factor of q=16 or q=32.  Measurements of sources with S/N=10 or greater, made from quantized images 
+do not show significant systematic differences from those made on un-quantized data products.  
 
-\item {\bf When and where to use lossy compression:}  Compression should occur after production but before archiving. 
-This ameliorates any risk that compression adversely impacts the ability of LSST to meet science requirements.  The availability of compressed products for
+\item {\bf Algorithm:} The best performing, off-the-shelf candidate for compression is BZIP2 which 
+achieves a compression factor of 5-7.  The main drawback to BZIP2 is speed but in trading speed for 
+compression factor the use of LZ or ZSTD would roughly double the storage costs.  
+
+\item {\bf When and where to use lossy compression:}  Compression should occur after production
+but before archiving.  This ameliorates any risk that compression adversely impacts the ability 
+of LSST to meet science requirements.  The availability of compressed products for
 users is meant to allow investigations to proceed without an explicit need for reprocessing.  
 
-\item {\bf PVI Products:} PVI images are the clearest case where lossy compression should be considered as these products otherwise would not be stored, requiring re-computation, or would require a large tape storage infrastructure. 
+\item {\bf Other Products:} Within the data storage model there are a few other products that 
+might be considered as candidates for lossy compression.  These are: the Data Release Processing
+(DRP) COADD images, the Alert Processing (AP) templates, and the 60-day store of PVI images from 
+the AP pipeline for PreCovery of transients.  The realized benefit of storing any of these with 
+lossy compression is 100's of times smaller than the DRP PVI images.  Moreover, if lossy compression 
+were used for any of these AP data types, there would be a direct impact on the production results.  
+Therefore we do NOT recommend use of lossy compression without a demonstration that its use would 
+not prevent reaching survey requirements.  To do so requires a detailed test with working versions
+of the pipelines and real? LSST data. 
 
-\item {\bf Other Products:} Within the data storage model there are a few other products that might be considered as candidates for lossy compression.  These are: the DRP COADD images, the AP templates, and the 60-day store of PVI images from the AP pipeline for PreCovery of transients.  The realized benefit of storing any of these with lossy compression is 100's of times smaller than the DRP PVI images.  Moreover, if lossy compression were used for any of these data types, there would be a direct impact on the production results.  Therefore we do NOT recommend use of lossy compression without a demonstration that its use would not prevent reaching survey requirements.  To do so requires a detailed test with working versions of the pipelines and real? LSST data. 
-
-\item {\bf Verification:} The current tests are not realized within the LSST framework or QA effort and they are moderately costly to make (they require production to be repeated for each level of quantization).  It is recommended that a means to implement tests similar to those detailed here be considered so that as the pipelines and LSST measurement algorithms mature...
+\item {\bf Verification:} The current tests are not realized within the LSST framework or QA effort.
+They costly to make as they require production to be repeated for each level of quantization.  
+It is recommended that a means to implement tests similar to those detailed here be considered 
+so that as the pipelines and LSST measurement algorithms mature real tests on real data can verify
+and set the quantization value appropriately.
 
 \end{enumerate}
 
@@ -662,7 +703,7 @@ the point where it is poised to embrace the enemy of the good (i.e. the perfect)
 
 \begin{enumerate}
 \item ADD:  number of sources lost as of function q
-\item ADD:  Table with benchmark vs q for each set of measurements
+\item {\bf Done} Table with benchmark vs q for each set of measurements
 \item ADD:  Contribution due to Lossy compression in an error budget (look at delta-uncertainty vs q?)
 \item ADD:  Code in repository
 \item {\bf Done}  ADD: explain separability between compression and quantization
