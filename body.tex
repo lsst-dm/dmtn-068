@@ -22,7 +22,7 @@ budget.  The benefit from storing compressed products would only be realized if 
 products were indeed useful for many users as it would free resources that otherwise
 would be engaged in regenerating or serving a tape archive.
 
-The LSST has traditionally avoided lossy compression for any of its image data products 
+The LSST project has traditionally avoided lossy compression for any of its image data products 
 (including the large co-added images as well as templates retained for each data release). 
 Anecdotal experience from other recent surveys indicate that science ready images stored
 with a lossy compression satisfy the scientific needs of their user communities.  For example, 
@@ -36,7 +36,6 @@ were relatively idealized, in this note we describe the results from a small tes
 precursor data from HSC to provide a sense of how lossy compression might be applied for LSST.
 
 
-
 \section{Methodology}
 
 This investigation is not meant to address the specific file format(s) that might be
@@ -47,7 +46,7 @@ HSC data that formed a modest depth patch on which pipeline regression testing w
 being routinely performed in the development of the LSST pipelines (the {\it ci\_hsc} test set).  
 For this test set there were 33 images/CCDs, from 11 visit/exposures, at two bands (HSC-R, HSC-I).
 Included among these images are a 4 images near the edge of the HSC focal-plane, where 
-vignetting causes a portion of the detector unusable for science.  These regions are 
+vignetting causes a portion of the detector to be unusable for science.  These regions are 
 masked and present very different noise characteristics but are useful because they show some 
 caveats that must be considered when applying compression.
 
@@ -78,8 +77,8 @@ uncertainties.
 \item {\bf Compression algorithm benchmarks:} to measure the compression factor achieved, along with
 algorithm execution times for compression and decompression.
 \end{enumerate}
-In addition a second round of image and catalog benchmarks can also be obtained to assess
-the changes that might be expected when compressed products are combined to form stacked
+In addition a second set of image and catalog benchmarks are obtained to assess
+the changes that might be expected when quantized products are combined to form stacked
 images from which astronomical source measurements are also obtained.
 
 
@@ -98,7 +97,7 @@ range accessible in the quantized images.
 Figure~\ref{pixel_dist} shows the detailed distribution of pixels values for the science and weight planes 
 from two images typical of those in the test set.  The first is a typical image, while the second is atypical
 in that the image comes from the edge of the HSC focal plane where vignetting and hence significant masking 
-occurs.  The difference in the distribution are most apparent in the weights, where it becomes clear that
+occurs.  The difference in the distributions are most apparent in the weights, where it becomes clear that
 for the quantization/noise-estimation algorithms to behave consistently, flagged pixels need to be rejected.
 A modest amount a caution should be exercised so that image compression acts consistently.  Moreover, it should
 noted that flagged data might have very different characteristics after quantization is applied
@@ -109,8 +108,8 @@ the effect on pixels with objects/sources, so we typically include pixels with F
 
 Table~\ref{tab_bscale} summarizes the effect of quantization on the original images.  There we include 
 the range of BSCALE's (the quantization factor that resulted) for both the science and weight image planes
-and then further examine the RMS in the images and examine the fractional increase when compariing the 
-measuruement on the quantized and un-quantized versions of the image.  The RMS values for the "Original"
+and then further examine the RMS in the images and examine the fractional increase when comparing the 
+measurements on the quantized and un-quantized versions of the image.  The RMS values for the "Original"
 images are not the same as that used when setting BSCALE (for the quantization) because RMS values
 draw from distributions that include the source pixels (i.e. FLAG=32).  Note that as early as a quantization
 factor of q=32, but clearly at q=128, the change in the RMS of the images cannot be well measured 
@@ -152,7 +151,7 @@ when considering the difference due to quantization.}
 \hline
 \multicolumn{9}{c}{Sample 1 (HSC-R images)}  \\
 \hline
- None   &              &       & 7.281  &         &              &       & 2.327 &          \\
+Original &             &       & 7.281  &         &              &       & 2.327 &          \\
     4   & 1.665--2.056 & 1.851 & 7.298  & 0.229 & 0.368--0.977 & 0.605 & 2.337 & 0.417  \\
     8   & 0.832--1.028 & 0.926 & 7.294  & 0.175 & 0.184--0.489 & 0.303 & 2.336 & 0.374  \\
    16   & 0.416--0.514 & 0.463 & 7.290  & 0.126 & 0.092--0.244 & 0.151 & 2.330 & 0.120  \\
@@ -162,7 +161,7 @@ when considering the difference due to quantization.}
 \hline 
 \multicolumn{9}{c}{Sample 2 (HSC-I images)}  \\
 \hline
- None   &              &       & 12.471 &         &              &       & 3.925 &          \\
+ Original &              &       & 12.471 &         &              &       & 3.925 &          \\
     4   & 3.012--3.420 & 3.226 & 12.516 & 0.357 & 0.789--1.569 & 1.046 & 3.938 & 0.351  \\
     8   & 1.506--1.710 & 1.613 & 12.497 & 0.201 & 0.395--0.784 & 0.523 & 3.934 & 0.229  \\
    16   & 0.753--0.855 & 0.807 & 12.485 & 0.112 & 0.197--0.392 & 0.261 & 3.926 & 0.034  \\
@@ -186,7 +185,7 @@ are typically more pixels that exceed this range and in the worst cases (e.g. im
 are vignetted) a large fraction of the weight pixels cannot be tracked.
 
 We then measure the standard deviation (RMS) in each science and weight image ($\sigma_{{\rm I}_{\rm q}}$ 
-and $\sigma_{{\rm W}_{q}}$ respectively) to understand the fractional increase in the image noise
+and $\sigma_{{\rm W}_{q}}$,, respectively) to understand the fractional increase in the image noise
 from the quantization ( $\sigma_{\rm grow} = \sqrt{\sigma_{{\rm I}_{q}}^2 - \sigma_{{\rm I}_{0}}^2 }$.  
 Figure~\ref{image_difference} show histograms of these metrics based
 on the images in this test set.  The left panels show the residual noise as measured from the difference
@@ -226,7 +225,7 @@ understand how properties of the coadd images change when they are constructed
 using quantized image products. 
 
 To do this we compare coadd images constructed from the original, 
-never-compressed images with coadd images constructed from the quantized images.
+never-quantized images with coadd images constructed from the quantized images.
 In the current limited test, only two coadded images were produced (a single patch 
 with two bands) thus the we have only two samples to examine. 
 The comparison is further hampered both because the depth of these coadd images 
@@ -235,22 +234,21 @@ or even 1000's that can be expected from LSST) and to complicate matters further
 the images are no longer in counts (they have been scaled based on a photometric
 calibration) and an outlier rejection algorithm is active within the pipeline. 
 
-Besides these caveats, the comparison at the image level is similar to that made for 
+With these caveats in mind, the comparison at the image level is similar to that made for 
 the individual images except that a a constraint has been added to 
-remove locations where the clipping algorithm has systematically rejected a region 
-of an image (in the test set there were of order a few such regions per coadd image
-totaling comprised of a few times 10,000 pixels at q=4 dropping to ~1,000 pixels at q=64).
-Since there are only two samples, the results are summarized in Table~\ref{tab_agg_image_stat}.
+remove locations where the clipping algorithm has systematically rejected one of the images.
+In the test set there were of order a few such regions per coadd image, overall they were
+comprised of a few 10,000's of pixels at q=4 dropping to ~1,000 pixels at q=64).
 
 % Currently that rejection algorithn looks for 20-sigma outliers in the difference between quantized and unquantized (using clipped median and std-deviation) 
 
-Table~\ref{tab_agg_image_stat} summarizes the pixel-level differences.  The actual RMS
-in the coadd image does not vary substantially.  However, when the difference between
-the coadds constructed from unquantized and quantized images are considered the residual
-is comprised of roughly Gaussian disribution but with an underlying broader distribution
-that has roughly 10 times the width but 100-1000 times less amplitude.  In Table~\ref{tab_agg_image_stat}
-we summarize the width/extent by tracking the min and max differences seen in the image/weight
-planes.
+The results from the two available samples are summarized in Table~\ref{tab_agg_image_stat}.
+The RMS in the coadd image does not vary substantially with the quantization factor.  However, 
+when the difference between the coadds constructed from unquantized and quantized images are 
+considered the residual is comprised of a roughly Gaussian distribution but with an underlying 
+broader distribution that has roughly 10 times the width but 100-1000 times less amplitude.  
+In Table~\ref{tab_agg_image_stat} we summarize the width/extent by tracking the min and max differences 
+seen in the image/weight planes.
 
 \begin{table}
 \caption{Differences in Coadd Images Constructed from Quantized Images}
@@ -303,7 +301,7 @@ use a 6 pixel radius circular aperture while the PSF fitting measurements are th
 was used to subselect stellar/point-source measurements.
 
 The top two panels in each set show the total number of objects per flux bin, followed by a plot 
-showing the flux uncertainty as a function of flux from the never compressed image.  Beneath these 
+showing the flux uncertainty as a function of flux from the never-quantized image.  Beneath these 
 are plotted the difference between the measurements from the quantized images and the never-quantized 
 images with subsequent plots using an increasing level of quantization.  These difference 
 plots are shown in units of $\sigma_{\rm F_0}$ (i.e. each difference measurement is scaled by the
@@ -315,6 +313,14 @@ histograms in Figure~\ref{plot_se_flux}).  From Table~\ref{tab_se_flux_diff} it 
 that for $q=32$, 90\% of all PSF flux measurements differ by less than 0.1$\sigma$ for objects 
 with S/N=3 or higher.   Similarly, 90\% of all aperture flux measurements differ by less than 0.1$\sigma$
 for objects with S/N=5 or higher.
+
+Two other avenues have been attempted in looking at these measurements.  The first was to examine the 
+uncertainties.  While the uncertainties do change for individual flux measurements on the quantized 
+images, there is no evidence that they systematically increase due to the quantization.  The second was
+an attempt to examine whether sources were lost/created due to the quantization.  This was not possible
+in the case of this study, the measurements were made using forced photometry so the loss/gain of a 
+source is directly tied to the detection on the coadd images (which is deeper than
+the individual images.
 
 \begin{figure}[t]
 \centering
@@ -364,9 +370,10 @@ and shape measurements (left and right panels, respectively) as a function of si
 (S/N) in the unquantized images.  For the centroids we use the {\it base\_SdssCentroid\_x} (x), and 
 {\it base\_SdssCentroid\_y} (y), to compute the linear offset 
 $X_q-X_0 = \sqrt{ (x_q-x_0)^2 + (y_q-y_0)^2}$ between the measurements
-made in the quantized and unquantized images.  Note that the current version of forced photometry 
-does not flag poor and low signal-to-noise measurements so those measurements pollute/inflate the 
-distributions show in the low signal-to-noise portion of the centroid plots in Figure~\ref{plot_cen_shape}.
+made in the quantized and unquantized images.  Note that the version of forced photometry that is 
+deployed in this test does not flag poor and low signal-to-noise measurements so those measurements 
+pollute/inflate the distributions show in the low signal-to-noise portion of the centroid plots 
+in Figure~\ref{plot_cen_shape}.
 
 In order to investigate the impact of quantization on shapes, we use the {\it base\_SdssShape\_xx}, 
 {\it base\_SdssShape\_yy}, and {\it base\_SdssShape\_xy} measurements to form a shape measurement, 
@@ -433,7 +440,7 @@ Similar to the comparisons made for the individual images, we compare the catalo
 that was constructed from the never-quantized and the quantized PVI images.  The same four quantities were examined 
 (aperture flux, PSF flux, centroid, and shape).  Figures~\ref{plot_coadd_flux} and \ref{plot_coadd_cen_shape} show
 the results of that comparison and Tables~\ref{tab_coadd_flux_diff} and \ref{tab_coadd_cen_shape_diff} report the 
-limiting difference that encompasses 90\% of objects measurments.
+limiting difference that encompasses 90\% of objects measurements.
 
 Based on the results in Table~\ref{tab_coadd_flux_diff} it can be seen that for coadds constructed from images 
 with $q=64$, 90\% of all PSF and aperture flux measurements differ by less than 0.1$\sigma$ for objects 
@@ -442,13 +449,21 @@ might be less desirable, it should be noted that these coadds, comprised of only
 cases compared to those that would result from the LSST survey (with many 100's of images per band at each location
 in the survey footprint).  Clearly a more realistic test should be implemented.
 
+Here we also tried to make an assessment of the loss/creation of sources due to the quantization.  While this is 
+likely possible with a little more creative work, the fast version encountered an additional "feature" in the 
+current test pipeline.  That feature was that the catalogs were rife with duplicate but not identical measurements
+(more than 10% of objects had two entries).  Given the other issue, that the coadds themselves are comprised of 
+many fewer images than a typical LSST coadd, this signaled the point where it make more sense to wait for the 
+development/maturation of the LSST pipelines to obtain a more accurate understanding of how the coadds built 
+from quantized products will behave (rather than create unrealistic concerns).
+
 The difference measured in the centroids and shapes show a somewhat different trend.  Considering the 
 vales in Table~\ref{tab_coadd_cen_shape_diff} the quantization also seems to make modest differences on 
 the centroid measurements but the shapes show much smaller changes.  For coadds constructed with q=64, 90\% 
 of objects with S/N=10 are recovered with differences of less than 0.1 pixels (whereas the single-image
-measurments reached the same benchmark for q=16).  On the other hand, the shape measurements for objects with
+measurements reached the same benchmark for q=16).  On the other hand, the shape measurements for objects with
 S/N=5 match those in the coadds constructed from un-quantized images for q=16 (similar to what was found 
-for the single-image measurments).
+for the single-image measurements).
 
 \begin{figure}[t]
 \centering
@@ -484,7 +499,7 @@ for the single-image measurments).
 \end{figure}
 
 
-\begin{table}[ht]
+\begin{table}[hb]
 \caption{Maximum Flux Difference (in units of $\sigma_{\rm F_0}$) for 90\% of COADD Objects}
 \centering
 \begin{tabular}[]{c|rrrr|rrrr}
@@ -523,7 +538,7 @@ for the single-image measurments).
 \label{tab_coadd_cen_shape_diff}
 \end{table}
 
-\subsection{Lost Objects}
+% \subsection{Lost Objects}
 
 
 \clearpage
@@ -624,17 +639,18 @@ was available the threading was set to use 4 cores.
 \section{Recommendations}
 
 Originally the intent of this investigation was to match these results to requirements within the 
-LSST SRD \citedsp{LPM-17}.  This has proven relatively difficult.  For the fluxes, the measured 
-changes found in this test are much smaller than their associated uncertainties.  Moreover, the
-uncertainties on the measurements from the quantized images, while different on an object-by-object
-sense, do not show a systematic increase when quantization is applied.  Therefore it is not clear 
-that we can even make a statement about the contribution to the error budget leading to any given 
-requirement.
-
-In this test measurements made on quantized images do not show systematic differences or systematic 
-increases in their undercertainties when compared to the same measurements made on the original data.  
-The differences do systematically decrease as the degree of quantization increases (higher values of q).
-
+LSST \SRD \citedsp{LPM-17}.  This has proven relatively difficult for many reasons.
+First, the \SRD is geared toward instrument/hardware performances, and most requirements are not 
+stated with a performance for a source at a specific signal-to-noise.  The guiding principle is
+\begin{quote} ...the measurement errors for fundamental quantities, 
+such as astrometry, photometry and image size, should not be dominated by algorithmic performance.
+\end{quote}
+The differences that result when making measurements on the quantized single-epoch images are typically 
+much smaller than the associated uncertainties when making the same measurement on the never-quantized
+images.  In terms of source flux, at S/N=10 if those differences are adopted as an additional uncertainty, 
+90\% of sources would show an increase of less than $\frac{1}{10}$th in their uncertainty when quantization 
+is applied.  In addition there is no evidence that the uncertainties of the measurements on the quantized 
+images systematically increase.
 
 Below, our recommendations assume:
 \begin{itemize}
@@ -673,7 +689,7 @@ compression factor the use of LZ or ZSTD would roughly double the storage costs.
 \item {\bf When and where to use lossy compression:}  Compression should occur after production
 but before archiving.  This ameliorates any risk that compression adversely impacts the ability 
 of LSST to meet science requirements.  The availability of compressed products for
-users is meant to allow investigations to proceed without an explicit need for reprocessing.  
+users is meant to allow followup investigations to proceed without an explicit need for reprocessing.  
 
 \item {\bf Other Products:} Within the data storage model there are a few other products that 
 might be considered as candidates for lossy compression.  These are: the Data Release Processing
@@ -691,24 +707,13 @@ It is recommended that a means to implement tests similar to those detailed here
 so that as the pipelines and LSST measurement algorithms mature real tests on real data can verify
 and set the quantization value appropriately.
 
-\end{enumerate}
+\item {\bf User Interfaces:} If lossy compression is used there will need to be a decision whether it
+should be applied on the image pixels only or at the file level.  The former has the advantage that 
+header information could be accessible without decompressing but means that common tools (especially
+those developed external to LSST) would need additions.  The latter choice would alleviate that problem
+but would place the onus on users (and pipelines) to have the ability to recognize and decompress 
+such products before they could be used.
 
-
-\newpage
-\section{TBD, Comments, etc...}\label{sec_tbd}
-
-The following are the results of comments, suggestions to improve complete this analysis (currently from the WG).  
-Each of these are being considered (and if others have suggestions I am willing to listen) but this effort has now reached 
-the point where it is poised to embrace the enemy of the good (i.e. the perfect) so higher powers may be encouraged/invoked to truncate this list.
-
-\begin{enumerate}
-\item ADD:  number of sources lost as of function q
-\item {\bf Done} Table with benchmark vs q for each set of measurements
-\item ADD:  Contribution due to Lossy compression in an error budget (look at delta-uncertainty vs q?)
-\item ADD:  Code in repository
-\item {\bf Done}  ADD: explain separability between compression and quantization
-\item {\bf Done} ADD: PanStarrs: used compression on-the-fly with no complications or complaints...  (4-bits per std → q=16)
-\item FITS compatibility.... 
 \end{enumerate}
 
 
