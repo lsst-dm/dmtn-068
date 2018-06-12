@@ -29,7 +29,10 @@ with a lossy compression satisfy the scientific needs of their user communities.
 the Dark Energy Survey (DES), uses FPACK \citep{PSW2009} with a quantization of 16, 
 and Pan-STARRS reportedly uses 4-bits per standard deviation (also equivalent to a 
 quantization factor of 16) but with an inverse hyperbolic sine transformation to concentrate 
-the sampling near the background level \citep{Wetal2016}.  Indeed, \citet{PWH2010} have 
+the sampling near the background level \citep{Wetal2016}.  \citet{Betal2010} have shown that 
+for bandwidth limited cases compression reducing images to 2.5-4 bits per pixel using a square-root
+compression method would incur only modest loss (effectively 10\% of the observing time) and that 
+systematic biases in fluxes and shapes were less than 10$^{-4}$.  Indeed, \citet{PWH2010} have 
 argued that none of the scientific information is lost in an astronomical image even with 
 fairly drastic quantization (at levels as high as 0.5$\sigma$).  The tests used by \citet{PWH2010} 
 were relatively idealized, in this note we describe the results from a small test using 
@@ -280,8 +283,7 @@ seen in the image/weight planes.
 \label{tab_agg_image_stat}
 \end{table}
 
-
-\clearpage
+%\clearpage
 
 \subsection{Catalog/Measurement benchmarks}
 
@@ -449,14 +451,6 @@ might be less desirable, it should be noted that these coadds, comprised of only
 cases compared to those that would result from the LSST survey (with many 100's of images per band at each location
 in the survey footprint).  Clearly a more realistic test should be implemented.
 
-Here we also tried to make an assessment of the loss/creation of sources due to the quantization.  While this is 
-likely possible with a little more creative work, the fast version encountered an additional "feature" in the 
-current test pipeline.  That feature was that the catalogs were rife with duplicate but not identical measurements
-(more than 10% of objects had two entries).  Given the other issue, that the coadds themselves are comprised of 
-many fewer images than a typical LSST coadd, this signaled the point where it make more sense to wait for the 
-development/maturation of the LSST pipelines to obtain a more accurate understanding of how the coadds built 
-from quantized products will behave (rather than create unrealistic concerns).
-
 The difference measured in the centroids and shapes show a somewhat different trend.  Considering the 
 vales in Table~\ref{tab_coadd_cen_shape_diff} the quantization also seems to make modest differences on 
 the centroid measurements but the shapes show much smaller changes.  For coadds constructed with q=64, 90\% 
@@ -464,6 +458,23 @@ of objects with S/N=10 are recovered with differences of less than 0.1 pixels (w
 measurements reached the same benchmark for q=16).  On the other hand, the shape measurements for objects with
 S/N=5 match those in the coadds constructed from un-quantized images for q=16 (similar to what was found 
 for the single-image measurements).
+
+Unlike the measurements on the individual images (which used a forced photometry algorithm), object detection 
+was performed independently on the COADD images in each test.  Therefore, we can also characterize the 
+loss/creation of sources for the COADDs images constructed from quantized PVI images.  
+In Table~\ref{tab_coadd_lost_found} we summarize the numbers of objects that were detected on the original COADD 
+images but were not detected on the COADDs built from quantized PVIs (the ``lost'' sources)
+as well as the converse, ``new'' sources (identified on the COADDs constructed from the quantized PVIs).  We tabulate
+separately, numbers of sources without considering whether the objects were flagged and then repeat the exercise 
+considering only unflagged sources.  We also present the distribution of the unflagged sources
+that were lost and created as a function of their signal-to-noise (based on the PSF flux/uncertainty measurements)
+in Figure~\ref{plot_coadd_lost_found}.  These show that only faint sources are affected with only minimal changes 
+occurring with S/N > 10.  We again caution that this analysis is based on a test set that is constructed from a few 
+rather than 100's of images that would be used in LSST COADDs.  We also note that a cross check was made where we
+examined the lost/new source locations on the images and suspect that the signal-to-noise measurements may be
+systematic over-estimates.
+
+
 
 \begin{figure}[t]
 \centering
@@ -507,16 +518,17 @@ for the single-image measurements).
      &  \multicolumn{4}{c}{PSF Flux}  & \multicolumn{4}{c}{Aperture Flux} \\
  q   &  S/N=3 & S/N=5 & S/N=10 & S/N=100 & S/N=3 & S/N=5 & S/N=10 & S/N=100  \\
 \hline
-   4 & 0.399 & 0.296 & 0.264 &  0.225   &  0.443 & 0.392 & 0.291 &  0.208 \\
-   8 & 0.296 & 0.193 & 0.181 &  0.152   &  0.281 & 0.255 & 0.184 &  0.140 \\
-  16 & 0.234 & 0.142 & 0.128 &  0.107   &  0.237 & 0.186 & 0.120 &  0.089 \\
-  32 & 0.182 & 0.114 & 0.107 &  0.086   &  0.174 & 0.147 & 0.103 &  0.077 \\
-  64 & 0.193 & 0.107 & 0.102 &  0.083   &  0.156 & 0.126 & 0.096 &  0.071 \\
- 128 & 0.114 & 0.034 & 0.019 &  0.024   &  0.080 & 0.067 & 0.030 &  0.010 \\
+   4 & 0.405 & 0.297 & 0.274 &  0.233   &  0.453 & 0.413 & 0.307 &  0.216 \\
+   8 & 0.333 & 0.203 & 0.189 &  0.158   &  0.296 & 0.278 & 0.198 &  0.154 \\
+  16 & 0.252 & 0.149 & 0.129 &  0.113   &  0.246 & 0.194 & 0.128 &  0.095 \\
+  32 & 0.184 & 0.120 & 0.111 &  0.089   &  0.181 & 0.151 & 0.110 &  0.081 \\
+  64 & 0.198 & 0.111 & 0.103 &  0.084   &  0.163 & 0.129 & 0.099 &  0.075 \\
+ 128 & 0.120 & 0.036 & 0.024 &  0.033   &  0.085 & 0.069 & 0.038 &  0.011 \\
 \hline
 \end{tabular}
 \label{tab_coadd_flux_diff}
 \end{table}
+
 
 
 \begin{table}
@@ -527,16 +539,48 @@ for the single-image measurements).
      &  \multicolumn{4}{c}{Centroid}  & \multicolumn{4}{c}{Shape} \\
  q   &  S/N=3 & S/N=5 & S/N=10 & S/N=100 & S/N=3 & S/N=5 & S/N=10 & S/N=100  \\
 \hline
-   4 & 1.857 & 1.077 & 0.414 &  0.020   &  0.155 & 0.181 & 0.120 &  0.008 \\
-   8 & 1.185 & 0.677 & 0.281 &  0.015   &  0.144 & 0.113 & 0.098 &  0.006 \\
-  16 & 1.094 & 0.506 & 0.191 &  0.011   &  0.116 & 0.071 & 0.056 &  0.004 \\
-  32 & 0.856 & 0.353 & 0.142 &  0.009   &  0.075 & 0.057 & 0.049 &  0.003 \\
-  64 & 0.827 & 0.284 & 0.114 &  0.008   &  0.070 & 0.053 & 0.045 &  0.004 \\
- 128 & 0.652 & 0.156 & 0.073 &  0.006   &  0.029 & 0.010 & 0.005 &  $>$0.001 \\
+   4 & 1.926 & 1.109 & 0.460 &  0.025   &  0.167 & 0.175 & 0.146 &  0.009 \\
+   8 & 1.296 & 0.724 & 0.309 &  0.025   &  0.151 & 0.122 & 0.121 &  0.007 \\
+  16 & 1.208 & 0.525 & 0.219 &  0.018   &  0.075 & 0.066 & 0.056 &  0.004 \\
+  32 & 0.898 & 0.378 & 0.156 &  0.014   &  0.076 & 0.057 & 0.052 &  0.004 \\
+  64 & 0.920 & 0.329 & 0.125 &  0.013   &  0.067 & 0.056 & 0.051 &  0.004 \\
+ 128 & 0.730 & 0.163 & 0.084 &  0.009   &  0.028 & 0.011 & 0.006 &  0.001 \\
 \hline
 \end{tabular}
 \label{tab_coadd_cen_shape_diff}
 \end{table}
+
+
+\begin{table}
+\caption{Lost and Created Sources in COADD}
+\centering
+\begin{tabular}[]{cr|rr|rr}
+\hline
+     &                  & \multicolumn{2}{c}{w/ Flagged}  & \multicolumn{2}{c}{w/o Flagged} \\
+ q   & N$_{\rm object}$ & Lost & Created                  & Lost & Created  \\
+\hline
+   0 & 13851 &      &      &      &      \\
+   4 & 15144 & 1728 & 2897 & 1248 &  871 \\
+   8 & 13170 & 1717 & 1001 &  964 &  528 \\
+  16 & 13866 &  902 &  889 &  735 &  434 \\
+  32 & 13924 &  647 &  698 &  540 &  326 \\
+  64 & 13872 &  636 &  632 &  541 &  330 \\
+ 128 & 14508 &  374 &  987 &  149 &  223 \\
+\hline
+\end{tabular}
+\label{tab_coadd_lost_found}
+\end{table}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.75\textwidth]{figure/plot_coadd_missing_HSC-I.png}
+\caption{Distribution of S/N of objects that are lost/new when detection is run on COADDs constructed from 
+quantized images.}
+\label{plot_coadd_lost_found}
+\end{figure}
+
+
 
 % \subsection{Lost Objects}
 
@@ -559,18 +603,23 @@ greater speed.  The algorithms considered were:
 \item {\bf pbzip2:} a threaded/parallel implementation of bzip2.
 \item {\bf lbzip2:} another threaded/parallel implementation of bzip2.
 \item {\bf lz4:} a "typically faster" implementation of LZ77 (favoring speed over compression ratio). Pushing to higher compression ratios significantly degrades performance.
-\item {\bf lzop:} a separate implementation that trades a small hit in compression time for an improvement in decompression.  The performance trade is not apparent at the file size being used in these tests.
-\item {\bf zstd:} Also based on the LZ77 family and includes a parallel implementation.  In addition this
-algorithm has implementations/bindings over a wide variety of languages (including Python).  
-The usage of a pre-computed dictionary may offer improvement in speed/compression factor but 
-rigorous testing was not possible for this small set (performance was identical to the untrained
-algorithm if the full set was used both to train and then obtain benchmarks).
-\item {\bf xz:} 
+\item {\bf lzop:} an implementation of LZ77 trading a hit in compression time for an improvement in decompression.  
+The performance trade is not apparent for the file size in these tests.
+\item {\bf zstd:} Also based on LZ77 and includes a parallel implementation.  In addition there
+exist implementations/bindings for a wide variety of languages (including Python).  
+\item {\bf zstd$^\star$:} zstd but with use of a pre-computed dictionary to obtain an improvement
+in speed and/or compression factor.  Rigorous testing was not possible for this small set but performance
+was identical to the untrained algorithm if the full set was used both to train and then obtain benchmarks.
+\item {\bf xz:} Based on the LZMA variant of LZ77.  Good compression factors can be achieved 
+but in order to get better performance some tuning will be necessary (see xz$^\prime$ below).
+\item {\bf xz$^\prime$:} Used xz with an command line overide of $-$1 to obtain a factor of 10 in performance (speed)
+at a modest cost in compression factor. 
 \end{enumerate}
 
 The results from benchmark tests are summarized in Tables~\ref{compress_factor}-\ref{timing_decompress}, 
 showing compression factor, time to compress per file, and time to decompress per file, respectively.
-These times do not include the time to necessary to obtain and apply scale factor used in the quantization.  Furthermore, the set of files being compressed are nearly identical (98 Mb) and therefore do not provide 
+These times do not include the time to necessary to obtain and apply scale factor used in the quantization.  
+Furthermore, the set of files being compressed are nearly identical (98 Mb) and therefore do not provide 
 any information about algorithmic performance with respect to file size.  When a parallel implementation
 was available the threading was set to use 4 cores.
 
@@ -578,17 +627,17 @@ was available the threading was set to use 4 cores.
 \begin{table}
 \caption{Compression Factor Achieved}
 \centering
-\begin{tabular}[]{crrrrrrrrr}
+\begin{tabular}[]{crrrrrrrrrrr}
 \hline
- q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstdb  \\
+ q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstd$^\star$ & xz & xz$^\prime$  \\
 \hline
- q4       &   6.73 &  6.73 &  9.96 &  9.95 &  9.96 &  3.69 &  3.11 &  6.29 &  6.29  \\
- q8       &   5.54 &  5.53 &  8.20 &  8.20 &  8.21 &  3.34 &  2.96 &  5.42 &  5.42  \\
- q16      &   4.69 &  4.69 &  6.81 &  7.01 &  7.03 &  3.11 &  2.82 &  4.82 &  4.82  \\
- q32      &   4.04 &  4.03 &  6.14 &  6.14 &  6.14 &  2.93 &  2.66 &  4.35 &  4.35  \\
- q64      &   3.62 &  3.62 &  5.47 &  5.47 &  5.48 &  2.82 &  2.47 &  3.94 &  3.94  \\
- q128     &   3.38 &  3.37 &  4.88 &  4.88 &  4.88 &  2.66 &  2.32 &  3.56 &  3.57  \\
- vanilla  &   1.71 &  1.71 &  1.80 &  1.80 &  1.80 &  1.50 &  1.49 &  1.72 &  1.72  \\
+ 4       &   6.73 &  6.73 &  9.96 &  9.95 &  9.96 &  3.69 &  3.11 &  6.29 &  6.29 & 10.06 &  8.19  \\
+ 8       &   5.54 &  5.53 &  8.20 &  8.20 &  8.21 &  3.34 &  2.96 &  5.42 &  5.42 &  8.20 &  6.79  \\
+ 16      &   4.69 &  4.69 &  5.41 &  7.01 &  7.03 &  3.11 &  2.82 &  4.82 &  4.82 &  6.96 &  6.01  \\
+ 32      &   4.04 &  4.03 &  6.14 &  6.14 &  6.14 &  2.93 &  2.66 &  4.35 &  4.35 &  6.00 &  5.44  \\
+ 64      &   3.62 &  3.62 &  5.47 &  5.47 &  5.48 &  2.82 &  2.47 &  3.94 &  3.94 &  5.29 &  4.95  \\
+ 128     &   3.38 &  3.37 &  4.88 &  4.88 &  4.88 &  2.66 &  2.32 &  3.56 &  3.57 &  4.75 &  2.51  \\
+ vanilla  &   1.71 &  1.71 &  1.80 &  1.80 &  1.80 &  1.50 &  1.49 &  1.72 &  1.72 &  1.87 &  1.80  \\
 \hline
 \end{tabular}
 \label{compress_factor}
@@ -598,40 +647,41 @@ was available the threading was set to use 4 cores.
 \begin{table}
 \caption{Time to Compress per File}
 \centering
-\begin{tabular}[]{crrrrrrrrr}
+\begin{tabular}[]{crrrrrrrrrrr}
 \hline
- q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstdb  \\
+ q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstd$^\star$ & xz & xz$^\prime$  \\
 \hline
- q4       &    4.45 &   1.18 &   5.00 &   1.42 &   0.85 &   0.21 &   0.24 &   0.36 &   0.12  \\
- q8       &    6.06 &   1.64 &   4.91 &   1.39 &   0.82 &   0.21 &   0.24 &   0.42 &   0.15  \\
- q16      &    8.27 &   2.24 &   4.33 &   1.39 &   0.82 &   0.27 &   0.27 &   0.55 &   0.18  \\
- q32      &   10.30 &   2.76 &   5.27 &   1.42 &   0.79 &   0.24 &   0.27 &   0.58 &   0.21  \\
- q64      &   11.79 &   3.00 &   5.39 &   1.52 &   0.88 &   0.24 &   0.30 &   0.61 &   0.24  \\
- q128     &   12.76 &   3.21 &   5.91 &   1.61 &   0.94 &   0.27 &   0.30 &   0.67 &   0.21  \\
- vanilla  &    3.36 &   0.97 &   8.94 &   2.79 &   1.58 &   0.15 &   0.12 &   0.30 &   0.15  \\
+  4       &    4.45 &   1.18 &   5.00 &   1.42 &   0.85 &   0.21 &   0.24 &   0.36 &   0.12 &  55.27 &   3.33  \\
+  8       &    6.06 &   1.64 &   4.91 &   1.39 &   0.82 &   0.21 &   0.24 &   0.42 &   0.15 &  50.94 &   4.12  \\
+ 16      &    8.27 &   2.24 &   4.33 &   1.39 &   0.82 &   0.27 &   0.27 &   0.55 &   0.18 &  50.09 &   4.27  \\
+ 32      &   10.30 &   2.76 &   5.27 &   1.42 &   0.79 &   0.24 &   0.27 &   0.58 &   0.21 &  47.36 &   4.64  \\
+ 64      &   11.79 &   3.00 &   5.39 &   1.52 &   0.88 &   0.24 &   0.30 &   0.61 &   0.24 &  47.48 &   5.09  \\
+ 128     &   12.76 &   3.21 &   5.91 &   1.61 &   0.94 &   0.27 &   0.30 &   0.67 &   0.21 &  54.21 &   2.52  \\
+ vanilla  &    3.36 &   0.97 &   8.94 &   2.79 &   1.58 &   0.15 &   0.12 &   0.30 &   0.15 &  34.00 &  15.15  \\
 \hline
 \end{tabular}
 \label{timing_compress}
 \end{table}
 
 \begin{table}
-\caption{Time so Decompress per File}
+\caption{Time to Decompress per File}
 \centering
-\begin{tabular}[]{crrrrrrrrr}
+\begin{tabular}[]{crrrrrrrrrrr}
 \hline
- q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstdb  \\
+ q        &  gzip & pigz & bzip2 & pbzip2 & lbzip2 & lz4 & lzop & zstd & zstd$^\star$ & xz & xz$^\prime$  \\
 \hline
- q4       &    0.21 &   0.24 &   2.30 &   1.21 &   1.27 &   0.15 &   0.18 &   0.27 &   0.24  \\
- q8       &    0.24 &   0.27 &   2.33 &   1.12 &   1.24 &   0.18 &   0.18 &   0.27 &   0.27  \\
- q16      &    0.27 &   0.27 &   2.02 &   1.12 &   1.21 &   0.18 &   0.18 &   0.27 &   0.24  \\
- q32      &    0.30 &   0.30 &   2.42 &   1.24 &   1.24 &   0.15 &   0.18 &   0.27 &   0.24  \\
- q64      &    0.30 &   0.30 &   2.42 &   1.27 &   1.09 &   0.18 &   0.21 &   0.27 &   0.27  \\
- q128     &    0.30 &   0.33 &   2.82 &   1.30 &   1.24 &   0.24 &   0.21 &   0.30 &   0.27  \\
- vanilla  &    0.39 &   0.36 &   4.36 &   1.48 &   1.27 &   0.15 &   0.12 &   0.24 &   0.24  \\
+ 4       &    0.21 &   0.24 &   2.30 &   1.21 &   1.27 &   0.15 &   0.18 &   0.27 &   0.24 &   0.82 &   1.06  \\
+ 8       &    0.24 &   0.27 &   2.33 &   1.12 &   1.24 &   0.18 &   0.18 &   0.27 &   0.27 &   0.97 &   1.27  \\
+ 16      &    0.27 &   0.27 &   2.02 &   1.12 &   1.21 &   0.18 &   0.18 &   0.27 &   0.24 &   1.09 &   1.33  \\
+ 32      &    0.30 &   0.30 &   2.42 &   1.24 &   1.24 &   0.15 &   0.18 &   0.27 &   0.24 &   1.27 &   1.42  \\
+ 64      &    0.30 &   0.30 &   2.42 &   1.27 &   1.09 &   0.18 &   0.21 &   0.27 &   0.27 &   1.42 &   1.48  \\
+ 128     &    0.30 &   0.33 &   2.82 &   1.30 &   1.24 &   0.24 &   0.21 &   0.30 &   0.27 &   1.52 &   0.67  \\
+ vanilla  &    0.39 &   0.36 &   4.36 &   1.48 &   1.27 &   0.15 &   0.12 &   0.24 &   0.24 &   3.58 &   3.52  \\
 \hline
 \end{tabular}
 \label{timing_decompress}
 \end{table}
+
 
 
 \clearpage
