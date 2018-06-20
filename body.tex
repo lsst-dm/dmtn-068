@@ -743,13 +743,13 @@ users is meant to allow followup investigations to proceed without an explicit n
 
 \item {\bf Other Products:} Within the data storage model there are a few other products that 
 might be considered as candidates for lossy compression.  These are: the Data Release Processing
-(DRP) COADD images, the Alert Processing (AP) templates, and the 60-day store of PVI images from 
+(DRP) COADD images, the Alert Processing (AP) templates, and the 30-day store of PVI images from 
 the AP pipeline for PreCovery of transients.  The realized benefit of storing any of these with 
 lossy compression is 100's of times smaller than the DRP PVI images.  Moreover, if lossy compression 
 were used for any of these AP data types, there would be a direct impact on the production results.  
 Therefore we do NOT recommend use of lossy compression without a demonstration that its use would 
 not prevent reaching survey requirements.  To do so requires a detailed test with working versions
-of the pipelines and real? LSST data. 
+of the pipelines and ``real'' LSST data. 
 
 \item {\bf Verification:} The current tests are not realized within the LSST framework or QA effort.
 They costly to make as they require production to be repeated for each level of quantization.  
